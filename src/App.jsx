@@ -200,7 +200,17 @@ export default function App() {
           </motion.div>
 
           {/* 3D Carousel */}
-          <div className="relative w-full max-w-5xl h-[350px] md:h-[450px] flex items-center justify-center perspective-1000">
+          <motion.div 
+            className="relative w-full max-w-5xl h-[350px] md:h-[450px] flex items-center justify-center perspective-1000 touch-pan-y"
+            onPanEnd={(e, info) => {
+              const swipeThreshold = 50;
+              if (info.offset.x < -swipeThreshold) {
+                nextSlide();
+              } else if (info.offset.x > swipeThreshold) {
+                prevSlide();
+              }
+            }}
+          >
             <AnimatePresence>
               {photos.map((photo, index) => {
                 let offset = index - activeIndex;
@@ -262,7 +272,7 @@ export default function App() {
                 );
               })}
             </AnimatePresence>
-          </div>
+          </motion.div>
 
           {/* Carousel Controls */}
           <motion.div 
