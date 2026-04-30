@@ -142,6 +142,7 @@ export default function App() {
   const [activeIndex, setActiveIndex] = useState(2);
   const [isMobile, setIsMobile] = useState(false);
   const [showPortfolio, setShowPortfolio] = useState(false);
+  const [showServices, setShowServices] = useState(false);
   const [activeAccordion, setActiveAccordion] = useState(null);
 
   useEffect(() => {
@@ -197,6 +198,16 @@ export default function App() {
             <p className="mt-4 text-base md:text-xl text-white/80 max-w-2xl mx-auto font-light drop-shadow-md px-4">
               Premium Siding & Gutters for the modern home. Unmatched craftsmanship and lifetime durability.
             </p>
+            <div className="flex flex-wrap justify-center gap-4 mt-6">
+              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20">
+                <Shield className="w-4 h-4 text-[#38bdf8]" />
+                <span className="text-sm font-semibold text-white">Fully Insured</span>
+              </div>
+              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20">
+                <CheckCircle2 className="w-4 h-4 text-[#38bdf8]" />
+                <span className="text-sm font-semibold text-white">Free Estimates</span>
+              </div>
+            </div>
           </motion.div>
 
           {/* 3D Carousel */}
@@ -373,6 +384,15 @@ export default function App() {
                 onClick={() => setActiveAccordion(activeAccordion === index ? null : index)}
               />
             ))}
+            
+            <div className="text-center mt-12">
+              <button 
+                onClick={() => setShowServices(true)}
+                className="bg-[#38bdf8] text-slate-900 font-bold py-4 px-8 rounded-full hover:bg-white transition-colors inline-flex justify-center items-center gap-2"
+              >
+                View Detailed Services <ArrowRight className="w-5 h-5" />
+              </button>
+            </div>
           </motion.div>
         </section>
 
@@ -403,7 +423,7 @@ export default function App() {
             <div className="flex-1 grid grid-cols-2 gap-4 relative z-10 w-full">
               <div className="space-y-4">
                 <div className="spatial-glass p-6 rounded-3xl text-center">
-                  <div className="text-4xl font-bold text-[#38bdf8] mb-2">15+</div>
+                  <div className="text-4xl font-bold text-[#38bdf8] mb-2">4</div>
                   <div className="text-xs text-white/60 uppercase tracking-widest">Years Exp.</div>
                 </div>
                 <div className="h-48 rounded-3xl overflow-hidden transform-gpu">
@@ -566,6 +586,112 @@ export default function App() {
                   </motion.div>
                 )
               })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+    </div>
+      
+      {/* Full-Screen Services Overlay */}
+      <AnimatePresence>
+        {showServices && (
+          <motion.div 
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 100 }}
+            transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
+            className="fixed inset-0 z-[100] bg-[#0f172a] overflow-y-auto"
+          >
+            <div className="sticky top-0 z-20 spatial-glass-dark border-b border-white/10 p-4 md:p-6 flex justify-between items-center backdrop-blur-3xl">
+              <div>
+                <h2 className="text-2xl md:text-4xl font-bold">Our Services</h2>
+                <p className="text-white/60 text-sm md:text-base">Detailed solutions for your home's exterior</p>
+              </div>
+              <button 
+                onClick={() => setShowServices(false)}
+                className="bg-white/10 p-3 rounded-full hover:bg-white/20 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-8 md:space-y-12 py-12">
+              {[
+                {
+                  title: "Siding",
+                  icon: Home,
+                  description: "Transform your home's exterior with our premium architectural siding. We offer high-performance, weather-resistant materials that not only improve your home's energy efficiency but also dramatically boost its curb appeal. Our expert installers ensure every panel is perfectly aligned to protect your home against the elements.",
+                  features: ["Vinyl & Fiber Cement Options", "Weather & Impact Resistant", "Energy Efficient Insulation", "Wide Range of Colors & Textures"]
+                },
+                {
+                  title: "Gutters",
+                  icon: Droplets,
+                  description: "Protect your foundation and landscaping with our custom-fabricated seamless gutters. Designed for optimal water management, our systems are built to handle heavy rainfall while maintaining a clean, modern look. We measure and form the gutters right at your home for a perfect, leak-free fit.",
+                  features: ["Seamless Custom Fabrication", "Leaf Guards & Covers", "Proper Pitching & Drainage", "Multiple Color Matches"]
+                },
+                {
+                  title: "Roofing",
+                  icon: Shield,
+                  description: "Your roof is your home's first line of defense. From minor repairs to complete tear-offs and replacements, we provide top-quality roofing solutions engineered to protect your home from the harshest elements. We use only top-tier materials that offer longevity and aesthetic appeal.",
+                  features: ["Architectural Shingles", "Leak Detection & Repair", "Storm Damage Restoration", "Proper Attic Ventilation"]
+                },
+                {
+                  title: "Remodeling",
+                  icon: Wrench,
+                  description: "Breathe new life into your space with our comprehensive remodeling services. Whether it's an exterior face-lift or an interior transformation, our expert team delivers flawless craftsmanship from start to finish. We work closely with you to turn your vision into a reality.",
+                  features: ["Exterior Makeovers", "Interior Renovations", "Custom Trim & Molding", "Modernized Finishes"]
+                },
+                {
+                  title: "Fences & Decks",
+                  icon: LayoutGrid,
+                  description: "Expand your outdoor living space with custom-designed decks and secure, beautiful fencing. Tailored to your lifestyle and your home's architecture, we build outdoor spaces made for making memories. From standard privacy fences to multi-level composite decks, we do it all.",
+                  features: ["Wood & Composite Decks", "Privacy & Picket Fencing", "Custom Railings & Stairs", "Weather-Treated Materials"]
+                }
+              ].map((service, idx) => (
+                <motion.div 
+                  key={idx}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="spatial-glass-dark border border-white/10 rounded-3xl p-6 md:p-10 flex flex-col md:flex-row gap-8 items-start group hover:border-[#38bdf8]/50 transition-colors"
+                >
+                  <div className="bg-[#38bdf8]/10 p-6 rounded-2xl shrink-0 group-hover:scale-110 group-hover:bg-[#38bdf8]/20 transition-all">
+                    <service.icon className="w-10 h-10 md:w-12 md:h-12 text-[#38bdf8]" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-2xl md:text-3xl font-bold mb-4">{service.title}</h3>
+                    <p className="text-white/70 text-lg leading-relaxed mb-6">
+                      {service.description}
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {service.features.map((feature, fIdx) => (
+                        <div key={fIdx} className="flex items-center gap-3">
+                          <CheckCircle2 className="w-5 h-5 text-[#38bdf8] shrink-0" />
+                          <span className="text-white/90 font-medium">{feature}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+            
+            {/* CTA in the overlay */}
+            <div className="max-w-3xl mx-auto px-4 pb-20 text-center">
+              <div className="spatial-glass p-8 md:p-12 rounded-3xl border border-[#38bdf8]/30 bg-gradient-to-br from-[#38bdf8]/10 to-transparent">
+                <h3 className="text-3xl font-bold mb-4">Ready to start your project?</h3>
+                <p className="text-white/70 mb-8 text-lg">Contact us for a free estimate and discover how we can transform your home.</p>
+                <button 
+                  onClick={() => {
+                    setShowServices(false);
+                    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="bg-[#38bdf8] text-slate-900 font-bold py-4 px-10 rounded-full hover:bg-white transition-colors inline-flex justify-center items-center gap-2"
+                >
+                  Get a Free Estimate <ArrowRight className="w-5 h-5" />
+                </button>
+              </div>
             </div>
           </motion.div>
         )}
