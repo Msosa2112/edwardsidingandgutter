@@ -591,8 +591,6 @@ export default function App() {
         )}
       </AnimatePresence>
 
-    </div>
-      
       {/* Full-Screen Services Overlay */}
       <AnimatePresence>
         {showServices && (
