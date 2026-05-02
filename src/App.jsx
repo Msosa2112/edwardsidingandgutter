@@ -534,8 +534,8 @@ export default function App() {
         className="fixed z-50 bottom-6 left-1/2 -translate-x-1/2 flex flex-row md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:left-6 md:translate-x-0 md:flex-col gap-2 md:gap-4"
       >
         <div className="spatial-glass rounded-full p-2 md:p-3 flex flex-row md:flex-col gap-2 md:gap-6 items-center shadow-2xl backdrop-blur-3xl border border-white/10">
-          <a href="#" className="bg-white text-slate-900 p-2 md:p-3 rounded-full shadow-lg hover:scale-110 transition-all"><FaFacebookF className="w-5 h-5" /></a>
-          <a href="#" className="text-white hover:bg-white/10 p-2 md:p-3 rounded-full transition-all hover:scale-110"><FaInstagram className="w-5 h-5" /></a>
+          <a href="https://www.facebook.com/share/1DyTvo4gBJ/" target="_blank" rel="noopener noreferrer" className="bg-white text-slate-900 p-2 md:p-3 rounded-full shadow-lg hover:scale-110 transition-all"><FaFacebookF className="w-5 h-5" /></a>
+          <a href="https://www.instagram.com/edward_sding_guttets_llc?igsh=dDMyOHcxbmZyYjVj" target="_blank" rel="noopener noreferrer" className="text-white hover:bg-white/10 p-2 md:p-3 rounded-full transition-all hover:scale-110"><FaInstagram className="w-5 h-5" /></a>
           <a href="https://wa.me/15027143707" target="_blank" rel="noopener noreferrer" className="text-white hover:bg-white/10 p-2 md:p-3 rounded-full transition-all hover:scale-110"><FaWhatsapp className="w-5 h-5" /></a>
           <a href="#" className="text-white hover:bg-white/10 p-2 md:p-3 rounded-full transition-all hover:scale-110"><FaGoogle className="w-5 h-5" /></a>
         </div>
