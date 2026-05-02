@@ -12,21 +12,25 @@ import { Footer } from "./components/ui/footer";
 import { cn } from "./lib/utils";
 
 const photos = [
-  "/fotos/WhatsApp Image 2026-04-27 at 9.05.35 AM (1).jpeg",
-  "/fotos/WhatsApp Image 2026-04-27 at 9.05.35 AM (2).jpeg",
-  "/fotos/WhatsApp Image 2026-04-27 at 9.05.35 AM (3).jpeg",
-  "/fotos/WhatsApp Image 2026-04-27 at 9.05.35 AM (4).jpeg",
-  "/fotos/WhatsApp Image 2026-04-27 at 9.05.35 AM (5).jpeg",
-  "/fotos/WhatsApp Image 2026-04-27 at 9.05.35 AM.jpeg",
-  "/fotos/WhatsApp Image 2026-04-27 at 9.05.36 AM (1).jpeg",
-  "/fotos/WhatsApp Image 2026-04-27 at 9.05.36 AM (2).jpeg",
-  "/fotos/WhatsApp Image 2026-04-27 at 9.05.36 AM (3).jpeg",
-  "/fotos/WhatsApp Image 2026-04-27 at 9.05.36 AM (4).jpeg",
-  "/fotos/WhatsApp Image 2026-04-27 at 9.05.36 AM (5).jpeg",
-  "/fotos/WhatsApp Image 2026-04-27 at 9.05.36 AM (6).jpeg",
-  "/fotos/WhatsApp Image 2026-04-27 at 9.05.36 AM.jpeg",
-  "/fotos/WhatsApp Image 2026-04-27 at 9.05.37 AM (1).jpeg",
-  "/fotos/WhatsApp Image 2026-04-27 at 9.05.37 AM.jpeg",
+  "/gallery/IMG_0887.JPEG",
+  "/gallery/IMG_0888.JPEG",
+  "/gallery/IMG_0890.JPEG",
+  "/gallery/IMG_0891.JPEG",
+  "/gallery/IMG_0892.JPEG",
+  "/gallery/IMG_0893.JPEG",
+  "/gallery/IMG_0895.JPEG",
+  "/gallery/IMG_0897.JPEG",
+  "/gallery/IMG_0898.JPEG",
+  "/gallery/IMG_0900.JPEG",
+  "/gallery/IMG_0902.JPEG",
+  "/gallery/IMG_0903.JPEG",
+  "/gallery/IMG_0904.JPEG",
+  "/gallery/IMG_0905.JPEG",
+  "/gallery/IMG_0906.JPEG",
+  "/gallery/IMG_0907.JPEG",
+  "/gallery/IMG_0908.JPEG",
+  "/gallery/IMG_0909.JPEG",
+  "/gallery/IMG_0910.JPEG"
 ];
 
 const marqueeImages = [...photos, ...photos];
