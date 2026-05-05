@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Shield, Home as HomeIcon, LayoutGrid, CheckCircle2, ArrowRight, ArrowUpRight, Droplets, Wrench, ChevronLeft, ChevronRight, ChevronDown, MapPin, Phone, Mail, X
+  Shield, Home as HomeIcon, LayoutGrid, CheckCircle2, ArrowRight, ArrowUpRight, Droplets, Wrench, ChevronLeft, ChevronRight, ChevronDown, MapPin, Phone, Mail, X, Lock
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { FaFacebookF, FaInstagram, FaWhatsapp, FaGoogle } from 'react-icons/fa';
 import { ThreeDMarquee } from "../components/ui/3d-marquee";
 import { Marquee } from "../components/ui/marquee";
@@ -120,6 +121,7 @@ const fadeUp = {
 };
 
 export default function Home() {
+  const navigate = useNavigate();
   const { photos: allPhotos, loading } = usePhotos();
   const photos = allPhotos.map(p => p.url);
   const marqueeImages = [...photos, ...photos];
@@ -549,12 +551,21 @@ export default function Home() {
                 <h2 className="text-2xl md:text-4xl font-bold">Project Portfolio</h2>
                 <p className="text-white/60 text-sm md:text-base">A detailed look at our craftsmanship</p>
               </div>
-              <button 
-                onClick={() => setShowPortfolio(false)}
-                className="bg-white/10 p-3 rounded-full hover:bg-white/20 transition-colors"
-              >
-                <X className="w-6 h-6" />
-              </button>
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => navigate('/admin')}
+                  className="bg-white/10 p-3 rounded-full hover:bg-white/20 transition-colors"
+                  title="Admin Login"
+                >
+                  <Lock className="w-6 h-6 text-[#38bdf8]" />
+                </button>
+                <button 
+                  onClick={() => setShowPortfolio(false)}
+                  className="bg-white/10 p-3 rounded-full hover:bg-white/20 transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
             </div>
             
             <div className="p-4 md:p-8 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
