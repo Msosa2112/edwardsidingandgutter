@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Shield, Home as HomeIcon, Search, LayoutGrid, User, Bell, Settings, Moon, Sun, 
-  ChevronLeft, ChevronRight, Phone, CheckCircle2, ArrowRight, ArrowUpRight, 
-  Menu, Droplets, Wrench, Star, Mail, MapPin, Clock, X, ChevronDown
+  Shield, Home as HomeIcon, LayoutGrid, CheckCircle2, ArrowRight, ArrowUpRight, Droplets, Wrench, ChevronLeft, ChevronRight, ChevronDown, MapPin, Phone, Mail 
 } from 'lucide-react';
 import { FaFacebookF, FaInstagram, FaWhatsapp, FaGoogle } from 'react-icons/fa';
 import { ThreeDMarquee } from "../components/ui/3d-marquee";
@@ -132,6 +130,13 @@ export default function Home() {
   const [showServices, setShowServices] = useState(false);
   const [activeAccordion, setActiveAccordion] = useState(null);
 
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   if (loading) {
     return <div className="min-h-screen bg-[#0f172a] flex items-center justify-center text-white">Loading...</div>;
   }
@@ -139,13 +144,6 @@ export default function Home() {
   // Fallback if no photos loaded
   const displayPhotos = photos.length > 0 ? photos : ["/gallery/IMG_0887.JPEG"];
   const displayMarquee = marqueeImages.length > 0 ? marqueeImages : ["/gallery/IMG_0887.JPEG", "/gallery/IMG_0888.JPEG"];
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   const nextSlide = () => setActiveIndex((prev) => (prev + 1) % displayPhotos.length);
   const prevSlide = () => setActiveIndex((prev) => (prev - 1 + displayPhotos.length) % displayPhotos.length);
