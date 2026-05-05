@@ -116,7 +116,7 @@ export default function AdminDashboard() {
                 </div>
                 <h3 className="text-xl font-bold mb-2">Subir Foto</h3>
                 <p className="text-white/50 text-xs">
-                  (Máx 5MB) Guardado en local
+                  (Máx 5MB) Guardado en la nube
                 </p>
               </label>
             </div>

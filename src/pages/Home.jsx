@@ -568,28 +568,44 @@ export default function Home() {
               </div>
             </div>
             
-            <div className="p-4 md:p-8 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {allPhotos.length > 0 ? allPhotos.map((photoObj, idx) => {
-                const serviceName = photoObj.category || "Premium Siding";
-                const photoUrl = photoObj.url;
-                
-                return (
-                  <motion.div 
-                    key={photoObj.id || idx}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: idx * 0.05 }}
-                    style={{ willChange: "transform, opacity" }}
-                    className="group relative h-64 md:h-80 rounded-3xl overflow-hidden spatial-glass-dark border border-white/10 cursor-pointer transform-gpu"
-                  >
-                    <img src={photoUrl} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 will-change-transform" alt={`Project ${idx}`} />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
-                      <h3 className="text-xl font-bold text-white mb-1">{serviceName}</h3>
-                      <p className="text-sm text-[#38bdf8]">View Details <ArrowUpRight className="inline w-4 h-4" /></p>
+            <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-12">
+              {allPhotos.length > 0 ? (
+                Object.entries(
+                  allPhotos.reduce((acc, photo) => {
+                    const cat = photo.category || "Premium Siding";
+                    if (!acc[cat]) acc[cat] = [];
+                    acc[cat].push(photo);
+                    return acc;
+                  }, {})
+                ).map(([category, categoryPhotos]) => (
+                  <div key={category} className="space-y-6">
+                    <div className="flex items-center gap-4">
+                      <h3 className="text-2xl font-bold text-[#38bdf8]">{category}</h3>
+                      <div className="h-px bg-white/10 flex-1"></div>
+                      <span className="text-white/40 text-sm font-medium">{categoryPhotos.length} fotos</span>
                     </div>
-                  </motion.div>
-                )
-              }) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {categoryPhotos.map((photoObj, idx) => (
+                        <motion.div 
+                          key={photoObj.id || idx}
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: idx * 0.05 }}
+                          style={{ willChange: "transform, opacity" }}
+                          className="group relative h-64 md:h-80 rounded-3xl overflow-hidden spatial-glass-dark border border-white/10 cursor-pointer transform-gpu"
+                        >
+                          <img src={photoObj.url} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 will-change-transform" alt={`${category} Project ${idx}`} />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                            <h3 className="text-xl font-bold text-white mb-1">{category}</h3>
+                            <p className="text-sm text-[#38bdf8]">View Details <ArrowUpRight className="inline w-4 h-4" /></p>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                ))
+              ) : (
                 <div className="col-span-full text-center text-white/50 py-12">
                   <p>No hay fotos disponibles en la galería.</p>
                 </div>
