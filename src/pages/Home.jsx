@@ -132,9 +132,13 @@ export default function Home() {
   const [showServices, setShowServices] = useState(false);
   const [activeAccordion, setActiveAccordion] = useState(null);
 
-  if (loading || photos.length === 0) {
+  if (loading) {
     return <div className="min-h-screen bg-[#0f172a] flex items-center justify-center text-white">Loading...</div>;
   }
+
+  // Fallback if no photos loaded
+  const displayPhotos = photos.length > 0 ? photos : ["/gallery/IMG_0887.JPEG"];
+  const displayMarquee = marqueeImages.length > 0 ? marqueeImages : ["/gallery/IMG_0887.JPEG", "/gallery/IMG_0888.JPEG"];
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -143,8 +147,8 @@ export default function Home() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const nextSlide = () => setActiveIndex((prev) => (prev + 1) % photos.length);
-  const prevSlide = () => setActiveIndex((prev) => (prev - 1 + photos.length) % photos.length);
+  const nextSlide = () => setActiveIndex((prev) => (prev + 1) % displayPhotos.length);
+  const prevSlide = () => setActiveIndex((prev) => (prev - 1 + displayPhotos.length) % displayPhotos.length);
 
   return (
     <div className="min-h-screen w-full bg-[#0f172a] text-white font-sans relative flex flex-col overflow-x-hidden selection:bg-[#38bdf8] selection:text-white pb-32 md:pb-0 md:pl-24">
@@ -161,7 +165,7 @@ export default function Home() {
             className="absolute inset-0"
           >
             <img 
-              src={photos[activeIndex]} 
+              src={displayPhotos[activeIndex] || displayPhotos[0]} 
               className="w-full h-full object-cover"
               alt="Background"
             />
@@ -214,10 +218,10 @@ export default function Home() {
             }}
           >
             <AnimatePresence>
-              {photos.map((photo, index) => {
+              {displayPhotos.map((photo, index) => {
                 let offset = index - activeIndex;
-                if (offset < -2) offset += photos.length;
-                if (offset > 2) offset -= photos.length;
+                if (offset < -2) offset += displayPhotos.length;
+                if (offset > 2) offset -= displayPhotos.length;
 
                 const isVisible = Math.abs(offset) <= 2;
                 if (!isVisible) return null;
@@ -285,7 +289,7 @@ export default function Home() {
           >
             <button onClick={prevSlide} className="p-1 md:p-2 hover:bg-white/20 rounded-full transition-colors"><ChevronLeft className="w-5 h-5 md:w-6 md:h-6" /></button>
             <div className="flex gap-2">
-              {photos.map((_, idx) => (
+              {displayPhotos.map((_, idx) => (
                 <button 
                   key={idx} 
                   onClick={() => setActiveIndex(idx)}
@@ -441,7 +445,7 @@ export default function Home() {
             <p className="text-white/60 max-w-2xl mx-auto">See the difference quality makes. Browse through our extensive library of transformations.</p>
           </div>
           <div className="w-full overflow-hidden relative">
-            <ThreeDMarquee images={marqueeImages} />
+            <ThreeDMarquee images={displayMarquee} />
           </div>
         </section>
 
@@ -556,7 +560,7 @@ export default function Home() {
             </div>
             
             <div className="p-4 md:p-8 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {allPhotos.map((photoObj, idx) => {
+              {allPhotos.length > 0 ? allPhotos.map((photoObj, idx) => {
                 const serviceName = photoObj.category || "Premium Siding";
                 const photoUrl = photoObj.url;
                 
@@ -576,7 +580,11 @@ export default function Home() {
                     </div>
                   </motion.div>
                 )
-              })}
+              }) : (
+                <div className="col-span-full text-center text-white/50 py-12">
+                  <p>No hay fotos disponibles en la galería.</p>
+                </div>
+              )}
             </div>
           </motion.div>
         )}
