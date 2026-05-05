@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Shield, Home as HomeIcon, LayoutGrid, CheckCircle2, ArrowRight, ArrowUpRight, Droplets, Wrench, ChevronLeft, ChevronRight, ChevronDown, MapPin, Phone, Mail 
+  Shield, Home as HomeIcon, LayoutGrid, CheckCircle2, ArrowRight, ArrowUpRight, Droplets, Wrench, ChevronLeft, ChevronRight, ChevronDown, MapPin, Phone, Mail, X
 } from 'lucide-react';
 import { FaFacebookF, FaInstagram, FaWhatsapp, FaGoogle } from 'react-icons/fa';
 import { ThreeDMarquee } from "../components/ui/3d-marquee";
