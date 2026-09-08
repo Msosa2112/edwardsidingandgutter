@@ -4,7 +4,7 @@ import { LogOut, Upload, Trash2, FolderEdit } from 'lucide-react';
 import { usePhotos } from '../context/PhotoContext';
 import { toast } from 'react-hot-toast';
 
-const SERVICES = ["Premium Siding", "Seamless Gutters", "Fascia & Soffit", "Window Trim", "Complete Exterior"];
+const SERVICES = ["General Construction", "Premium Siding", "Seamless Gutters", "Roofing", "Fascia & Soffit", "Window Trim", "Complete Exterior"];
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -58,10 +58,10 @@ export default function AdminDashboard() {
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 spatial-glass-dark p-6 md:p-8 rounded-[2rem] border border-white/10 shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-[#38bdf8]/10 rounded-full filter blur-[80px]"></div>
           <div className="flex items-center gap-6 relative z-10">
-            <img src="/logo.png" alt="Logo" className="h-16 object-contain filter brightness-110 drop-shadow-md" />
+            <img src="/logo.png" alt="Prime Stone Builders" className="h-16 object-contain filter brightness-110 drop-shadow-md" />
             <div>
-              <h1 className="text-3xl font-bold mb-1">Admin Dashboard</h1>
-              <p className="text-white/60 text-sm">Organiza las fotos por tipo de servicio</p>
+              <h1 className="text-3xl font-bold mb-1">Prime Stone Dashboard</h1>
+              <p className="text-white/60 text-sm">Organiza las fotos del portafolio por tipo de servicio</p>
             </div>
           </div>
           <div className="flex gap-4 relative z-10">

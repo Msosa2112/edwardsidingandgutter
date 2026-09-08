@@ -1,723 +1,1221 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Shield, Home as HomeIcon, LayoutGrid, CheckCircle2, ArrowRight, ArrowUpRight, Droplets, Wrench, ChevronLeft, ChevronRight, ChevronDown, MapPin, Phone, Mail, X, Lock
+  ArrowRight, 
+  Phone, 
+  MapPin, 
+  ChevronDown, 
+  Maximize2, 
+  X, 
+  ExternalLink, 
+  Check, 
+  Send,
+  Star
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { FaFacebookF, FaInstagram, FaWhatsapp, FaGoogle } from 'react-icons/fa';
-import { ThreeDMarquee } from "../components/ui/3d-marquee";
-import { Marquee } from "../components/ui/marquee";
-import { Footer } from "../components/ui/footer";
-import { cn } from "../lib/utils";
-
-import { usePhotos } from '../context/PhotoContext';
-
-
-const reviews = [
-  {
-    name: "Michael T.",
-    username: "Louisville, KY",
-    body: "Edward Siding did an incredible job on our gutters. Highly professional and efficient team.",
-    img: "https://avatar.vercel.sh/michaelt",
-  },
-  {
-    name: "Sarah L.",
-    username: "Jeffersonville, IN",
-    body: "The new architectural siding completely transformed our home's exterior. 10/10 recommend!",
-    img: "https://avatar.vercel.sh/sarahl",
-  },
-  {
-    name: "David H.",
-    username: "New Albany, IN",
-    body: "Fast, affordable, and zero mess left behind. The seamless gutters match perfectly.",
-    img: "https://avatar.vercel.sh/davidh",
-  },
-  {
-    name: "Jessica W.",
-    username: "Clarksville, IN",
-    body: "Excellent craftsmanship. They repaired our roof and siding after the storm flawlessly.",
-    img: "https://avatar.vercel.sh/jessicaw",
-  },
-  {
-    name: "Robert M.",
-    username: "Louisville, KY",
-    body: "Very transparent pricing and they finished the patio exactly when they said they would.",
-    img: "https://avatar.vercel.sh/robertm",
-  },
-  {
-    name: "Emily C.",
-    username: "St. Matthews, KY",
-    body: "Great communication from start to finish. Our new windows look gorgeous.",
-    img: "https://avatar.vercel.sh/emilyc",
-  },
-];
-
-const firstRow = reviews.slice(0, reviews.length / 2);
-const secondRow = reviews.slice(reviews.length / 2);
-
-const ReviewCard = ({ img, name, username, body }) => {
-  return (
-    <figure
-      className={cn(
-        "relative h-full w-64 cursor-pointer overflow-hidden rounded-2xl border p-4",
-        "spatial-glass border-white/10 hover:bg-white/10 transition-colors"
-      )}
-    >
-      <div className="flex flex-row items-center gap-2">
-        <img className="rounded-full" width="32" height="32" alt="" src={img} />
-        <div className="flex flex-col">
-          <figcaption className="text-sm font-medium text-white">
-            {name}
-          </figcaption>
-          <p className="text-xs font-medium text-white/40">{username}</p>
-        </div>
-      </div>
-      <blockquote className="mt-2 text-sm text-white/80">{body}</blockquote>
-    </figure>
-  );
-};
-
-const additionalServices = [
-  { title: "Roofing Services", content: "From minor repairs to complete roof replacements, we provide top-quality roofing solutions that protect your home from the elements." },
-  { title: "Window Installation", content: "Upgrade your home's energy efficiency and curb appeal with our premium window installation and replacement services." },
-  { title: "Exterior Painting", content: "Give your home a fresh, vibrant look with our professional exterior painting services, using weather-resistant paints for long-lasting results." },
-  { title: "Decks & Patios", content: "Expand your outdoor living space with custom-designed decks and patios tailored to your lifestyle and home architecture." },
-  { title: "Door Installation", content: "Secure and beautify your entryways with our high-quality door installation services, offering a variety of styles and materials." }
-];
-
-const AccordionItem = ({ title, content, isOpen, onClick }) => {
-  return (
-    <div className="spatial-glass border border-white/10 rounded-2xl overflow-hidden mb-4">
-      <button 
-        className="w-full px-6 py-4 flex justify-between items-center text-left hover:bg-white/5 transition-colors"
-        onClick={onClick}
-      >
-        <span className="font-bold text-lg">{title}</span>
-        <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.3 }}>
-          <ChevronDown className="w-5 h-5 text-[#38bdf8]" />
-        </motion.div>
-      </button>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="px-6 pb-4 text-white/70">
-              {content}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  )
-};
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
-};
+import toast from 'react-hot-toast';
+import ScrollFrameSequence from '../components/ScrollFrameSequence';
+import { Footer } from '../components/ui/footer';
 
 export default function Home() {
-  const navigate = useNavigate();
-  const { photos: allPhotos, loading } = usePhotos();
-  const photos = allPhotos.map(p => p.url);
-  const marqueeImages = [...photos, ...photos];
-
-  const [activeIndex, setActiveIndex] = useState(2);
-  const [isMobile, setIsMobile] = useState(false);
-  const [showPortfolio, setShowPortfolio] = useState(false);
-  const [showServices, setShowServices] = useState(false);
-  const [activeAccordion, setActiveAccordion] = useState(null);
+  const [activeFaq, setActiveFaq] = useState(null);
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [projectFilter, setProjectFilter] = useState('all');
+  const [showSocials, setShowSocials] = useState(true);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    const handleScroll = () => {
+      const mainEl = document.querySelector('main');
+      if (mainEl) {
+        const rect = mainEl.getBoundingClientRect();
+        // Hide social bar once the user scrolls into the main page content
+        setShowSocials(rect.top > window.innerHeight * 0.35);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  if (loading) {
-    return <div className="min-h-screen bg-[#0f172a] flex items-center justify-center text-white">Loading...</div>;
-  }
+  const [configState, setConfigState] = useState({
+    disciplines: ['Siding Systems'],
+    propertyType: 'Single-Family Residence',
+    timeline: 'Within 30 Days',
+    name: '',
+    phone: '',
+    zip: '',
+    notes: ''
+  });
+  const [submitting, setSubmitting] = useState(false);
 
-  // Fallback if no photos loaded
-  const displayPhotos = photos.length > 0 ? photos : ["/gallery/IMG_0887.JPEG"];
-  const displayMarquee = marqueeImages.length > 0 ? marqueeImages : ["/gallery/IMG_0887.JPEG", "/gallery/IMG_0888.JPEG"];
+  const toggleDiscipline = (discipline) => {
+    setConfigState((prev) => {
+      const exists = prev.disciplines.includes(discipline);
+      if (exists && prev.disciplines.length === 1) return prev;
+      return {
+        ...prev,
+        disciplines: exists 
+          ? prev.disciplines.filter((d) => d !== discipline)
+          : [...prev.disciplines, discipline]
+      };
+    });
+  };
 
-  const nextSlide = () => setActiveIndex((prev) => (prev + 1) % displayPhotos.length);
-  const prevSlide = () => setActiveIndex((prev) => (prev - 1 + displayPhotos.length) % displayPhotos.length);
+  const handleConfigSubmit = (e) => {
+    e.preventDefault();
+    if (!configState.name || !configState.phone) {
+      toast.error('Please provide your name and direct phone number.');
+      return;
+    }
+
+    setSubmitting(true);
+    setTimeout(() => {
+      setSubmitting(false);
+      toast.success('Scope received. An architectural field superintendent will call you directly within 24 hours.');
+      setConfigState({
+        disciplines: ['Siding Systems'],
+        propertyType: 'Single-Family Residence',
+        timeline: 'Within 30 Days',
+        name: '',
+        phone: '',
+        zip: '',
+        notes: ''
+      });
+    }, 800);
+  };
+
+  // Real, verified photography of completed Prime Stone Builders projects
+  const verifiedProjects = [
+    {
+      id: 'hardie-prospect',
+      category: 'siding',
+      title: 'Prospect Executive Facade',
+      location: 'Prospect, KY',
+      discipline: 'Architectural Siding',
+      image: '/projects/hardie-blue-residence.jpg',
+      specs: [
+        'James Hardie Statement Lap Siding',
+        'Custom Hand-Formed Aluminum Trim',
+        'Limewashed Masonry Water-Table',
+        'Dual Thermal & Moisture Barrier'
+      ],
+      description: 'Complete high-exposure residential facade overhaul in deep ocean blue fiber cement. Hand-mitered custom window wraps and water-shedding drip caps over brick foundation.'
+    },
+    {
+      id: 'cedar-floyds-knobs',
+      category: 'siding',
+      title: 'Warm Cedar Board & Batten Gable',
+      location: 'Floyds Knobs, IN',
+      discipline: 'Vertical Siding Accent',
+      image: '/projects/board-batten-cedar-gable.jpg',
+      specs: [
+        'Vertical Board & Batten Profile',
+        'Cedar Tone Natural Finish',
+        'Limewash Brick Contrast',
+        'Engineered Continuous Reveal'
+      ],
+      description: 'Architectural gable accent featuring vertical board-and-batten siding paired with white limewash brick masonry, bringing warmth and modern contrast to the roofline.'
+    },
+    {
+      id: 'portico-louisville',
+      category: 'masonry',
+      title: 'Craftsman Portico & Stone Bases',
+      location: 'Louisville Metro, KY',
+      discipline: 'General Construction & Masonry',
+      image: '/projects/stone-portico-framing.jpg',
+      specs: [
+        'Hand-Chiseled Stone Veneer',
+        'Structural Timber Post Framing',
+        'Architectural Shingle Overhang',
+        'On-Site Precision Mortar'
+      ],
+      description: 'Grand entryway transformation incorporating heavy-timber framed portico columns anchored onto handcrafted stone veneer pedestals with architectural shingle integration.'
+    },
+    {
+      id: 'drainage-jeffersonville',
+      category: 'gutters',
+      title: 'Continuous Seamless Drainage & Soffit',
+      location: 'Jeffersonville, IN',
+      discipline: 'Seamless Drainage',
+      image: '/projects/seamless-drainage-soffit.jpg',
+      specs: [
+        '6" .032" Heavy-Gauge Aluminum',
+        'Computerized Mobile Rollforming',
+        'Heavy-Duty Hidden Screw Hangers',
+        'Micro-Mesh Leaf Filtration'
+      ],
+      description: 'Custom-extruded continuous gutter system rollformed on-site directly from our mobile van. Hand-cut miters eliminate leak-prone seams along complex rooflines.'
+    },
+    {
+      id: 'shingle-roof-anchorage',
+      category: 'roofing',
+      title: '50-Year Architectural Shingle Roof',
+      location: 'Anchorage, KY',
+      discipline: 'Roofing Systems',
+      image: '/projects/architectural-shingle-roof.jpg',
+      specs: [
+        '50-Year High-Wind Shingles',
+        'Full Ice & Water Valley Shield',
+        'Synthetic Breathable Underlayment',
+        'Ridge-Vent Thermal Ventilation'
+      ],
+      description: 'Engineered roof replacement designed for severe Ohio Valley weather. Includes continuous synthetic underlayment, reinforced valley flashings, and complete drone attic survey.'
+    },
+    {
+      id: 'covered-patio-addition',
+      category: 'masonry',
+      title: 'Covered Porch Addition & Masonry',
+      location: 'Louisville East, KY',
+      discipline: 'Turnkey Construction',
+      image: '/projects/covered-patio-masonry.jpg',
+      specs: [
+        'Structural Timber Grade Beams',
+        'Continuous Brick Masonry Facade',
+        'Integrated Roofline Tie-In',
+        'Perimeter Concrete Footings'
+      ],
+      description: 'Full residential rear addition featuring structural covered porch framing, continuous exterior brick masonry, and unified architectural shingle roof extension.'
+    }
+  ];
+
+  const filteredProjects = projectFilter === 'all' 
+    ? verifiedProjects 
+    : verifiedProjects.filter(p => p.category === projectFilter);
+
+  const architecturalFaqs = [
+    {
+      spec: 'SPECIFICATION 01 // LICENSURE & RISK ASSURANCE',
+      q: 'Are Prime Stone Builders fully licensed, insured, and certified in Kentucky & Indiana?',
+      a: 'Yes, 100%. We hold active general contractor credentials across both Kentucky and Southern Indiana. We maintain comprehensive $2M commercial and residential liability coverage, full worker’s compensation, and strict OSHA-certified safety protocols.'
+    },
+    {
+      spec: 'SPECIFICATION 02 // PROPRIETARY ON-SITE FABRICATION',
+      q: 'Why do you rollform seamless gutters on-site instead of using pre-fabricated sections?',
+      a: 'Pre-fabricated retail gutters sold in 10-foot sections require seams every few feet, which inevitably leak and warp under Kentucky freeze-thaw cycles. Our custom mobile Ford Transit van is outfitted with a computerized rollformer that extrudes a single continuous run of .032" heavy-gauge aluminum to the exact millimeter of your roofline.'
+    },
+    {
+      spec: 'SPECIFICATION 03 // WARRANTY & CRAFTSMANSHIP GUARANTEE',
+      q: 'What warranties accompany your siding, masonry, and roofing installations?',
+      a: 'Every installation is backed by dual-tier coverage: up to 50-year non-prorated manufacturer material warranties (James Hardie Statement Collection, CertainTeed, Mastic) combined with our exclusive 10-Year Prime Stone Builders Craftsmanship and Labor Warranty.'
+    },
+    {
+      spec: 'SPECIFICATION 04 // PROJECT ONBOARDING & TIMELINE',
+      q: 'How fast can I receive a firm, itemized architectural proposal?',
+      a: 'Within 24 to 48 hours of contacting us, an experienced field superintendent will conduct a physical on-site evaluation, laser measurements, and present you with a transparent, itemized scope breakdown without aggressive sales pressure.'
+    }
+  ];
 
   return (
-    <div className="min-h-screen w-full bg-[#0f172a] text-white font-sans relative flex flex-col overflow-x-hidden selection:bg-[#38bdf8] selection:text-white pb-32 md:pb-0 md:pl-24">
+    <div className="min-h-screen w-full bg-[#080b11] text-white font-sans selection:bg-[#38bdf8] selection:text-slate-950">
       
-      {/* Dynamic Background Image (Fixed) */}
-      <div className="fixed inset-0 z-0 bg-black">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeIndex}
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
-            className="absolute inset-0"
-          >
+      {/* ========================================================================
+          FLOATING GLOBAL NAVBAR: Minimalist, Containerless
+          ======================================================================== */}
+      <header className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-8 md:px-12 pt-6 sm:pt-6 transition-all pointer-events-none">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
+          
+          {/* Logo & Company Name */}
+          <a href="#" className="pointer-events-auto flex items-center gap-2 sm:gap-3 group shrink-0">
             <img 
-              src={displayPhotos[activeIndex] || displayPhotos[0]} 
-              className="w-full h-full object-cover"
-              alt="Background"
+              src="/fav.png" 
+              alt="Prime Stone Builders" 
+              className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] group-hover:scale-105 transition-transform" 
             />
-            {/* GPU-optimized overlay instead of heavy CSS filters */}
-            <div className="absolute inset-0 bg-black/70"></div>
-          </motion.div>
-        </AnimatePresence>
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_transparent_0%,_#0f172a_120%)] pointer-events-none"></div>
-      </div>
-
-
-
-      {/* Main Content Container */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center pt-8 md:pt-16 px-4 md:px-8">
-        
-        {/* HERO SECTION */}
-        <section id="portfolio" className="w-full flex flex-col items-center justify-center min-h-[85vh] mb-20">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.4 }}
-            className="text-center mb-10 md:mb-16 z-20"
-          >
-            <img src="/logo.png" alt="Edward Siding & Gutter" className="mx-auto h-24 md:h-32 lg:h-48 object-contain drop-shadow-2xl filter brightness-110" />
-            <p className="mt-4 text-base md:text-xl text-white/80 max-w-2xl mx-auto font-light drop-shadow-md px-4">
-              Premium Siding & Gutters for the modern home. Unmatched craftsmanship and lifetime durability.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4 mt-6">
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20">
-                <Shield className="w-4 h-4 text-[#38bdf8]" />
-                <span className="text-sm font-semibold text-white">Fully Insured</span>
-              </div>
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20">
-                <CheckCircle2 className="w-4 h-4 text-[#38bdf8]" />
-                <span className="text-sm font-semibold text-white">Free Estimates</span>
-              </div>
+            <div className="flex flex-col drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
+              <span className="font-extrabold text-xs sm:text-sm md:text-base tracking-wider uppercase leading-none text-white whitespace-nowrap">
+                Prime Stone
+              </span>
+              <span className="text-[9px] sm:text-[10px] md:text-xs font-semibold text-[#38bdf8] tracking-widest uppercase leading-none mt-0.5">
+                Builders
+              </span>
             </div>
-          </motion.div>
+          </a>
 
-          {/* 3D Carousel */}
-          <motion.div 
-            className="relative w-full max-w-5xl h-[350px] md:h-[450px] flex items-center justify-center perspective-1000 touch-pan-y"
-            onPanEnd={(e, info) => {
-              const swipeThreshold = 50;
-              if (info.offset.x < -swipeThreshold) {
-                nextSlide();
-              } else if (info.offset.x > swipeThreshold) {
-                prevSlide();
-              }
-            }}
-          >
-            <AnimatePresence>
-              {displayPhotos.map((photo, index) => {
-                let offset = index - activeIndex;
-                if (offset < -2) offset += displayPhotos.length;
-                if (offset > 2) offset -= displayPhotos.length;
+          {/* Quick Nav Links (Desktop) */}
+          <nav className="hidden lg:flex items-center gap-8 text-xs font-semibold uppercase tracking-wider text-white/80 pointer-events-auto">
+            <a href="#disciplines" className="hover:text-[#38bdf8] drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)] transition-colors">Disciplines</a>
+            <a href="#gallery" className="hover:text-[#38bdf8] drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)] transition-colors">Field Work</a>
+            <a href="#standards" className="hover:text-[#38bdf8] drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)] transition-colors">Standards</a>
+            <a href="#configurator" className="hover:text-[#38bdf8] drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)] transition-colors">Scope Request</a>
+          </nav>
 
-                const isVisible = Math.abs(offset) <= 2;
-                if (!isVisible) return null;
-
-                // Tighter desktop offsets to avoid overlap with edges
-                const xOffset = isMobile ? offset * 120 : offset * 200;
-                const scaleValue = 1 - Math.abs(offset) * 0.15;
-                const zOffset = isMobile ? -Math.abs(offset) * 100 : -Math.abs(offset) * 150;
-                const rotateYValue = offset * -20;
-
-                return (
-                  <motion.div
-                    key={index}
-                    initial={false}
-                    animate={{
-                      x: xOffset,
-                      scale: scaleValue,
-                      rotateY: rotateYValue,
-                      z: zOffset,
-                      opacity: 1 - Math.abs(offset) * 0.3,
-                    }}
-                    transition={{ duration: 0.6, ease: [0.32, 0.72, 0, 1] }}
-                    className={`absolute w-[280px] md:w-[500px] lg:w-[600px] h-[350px] md:h-[400px] rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] spatial-glass-dark border border-white/20 p-2 ${
-                      offset === 0 ? 'z-30 cursor-default' : 'z-10 cursor-pointer hover:border-white/40'
-                    }`}
-                    onClick={() => offset !== 0 && setActiveIndex(index)}
-                    style={{ transformOrigin: "center center", willChange: "transform, opacity" }}
-                  >
-                    <img src={photo} loading={index > 3 ? "lazy" : "eager"} className="w-full h-full object-cover rounded-[1.25rem] transform-gpu" alt={`Project ${index + 1}`} />
-                    
-                    {offset === 0 && (
-                      <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.3 }}
-                        className="absolute bottom-4 left-4 right-4 md:bottom-6 md:left-6 md:right-6 spatial-glass p-4 md:p-6 rounded-2xl flex justify-between items-end backdrop-blur-xl"
-                      >
-                        <div>
-                          <h3 className="text-lg md:text-2xl font-bold mb-1 md:mb-2 line-clamp-1">Project Portfolio</h3>
-                          <p className="text-xs md:text-sm text-white/70 line-clamp-2">"Craftsmanship that protects and elevates."</p>
-                        </div>
-                        <button 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowPortfolio(true);
-                          }}
-                          className="bg-white text-slate-900 rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center hover:scale-110 transition-transform shrink-0 ml-2"
-                        >
-                          <ArrowUpRight className="w-4 h-4 md:w-5 md:h-5" />
-                        </button>
-                      </motion.div>
-                    )}
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
-          </motion.div>
-
-          {/* Carousel Controls */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="spatial-glass rounded-full p-2 flex items-center gap-3 md:gap-4 z-30 mt-8"
-          >
-            <button onClick={prevSlide} className="p-1 md:p-2 hover:bg-white/20 rounded-full transition-colors"><ChevronLeft className="w-5 h-5 md:w-6 md:h-6" /></button>
-            <div className="flex gap-2">
-              {displayPhotos.map((_, idx) => (
-                <button 
-                  key={idx} 
-                  onClick={() => setActiveIndex(idx)}
-                  className={`h-1.5 md:h-2 rounded-full transition-all ${idx === activeIndex ? 'bg-white w-5 md:w-6' : 'bg-white/30 w-1.5 md:w-2'}`} 
-                />
-              ))}
-            </div>
-            <button onClick={nextSlide} className="p-1 md:p-2 hover:bg-white/20 rounded-full transition-colors"><ChevronRight className="w-5 h-5 md:w-6 md:h-6" /></button>
-          </motion.div>
-
-          {/* Reviews Marquee */}
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
-            className="w-full mt-12 max-w-5xl relative flex flex-col items-center justify-center overflow-hidden"
-            style={{
-              maskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
-              WebkitMaskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
-            }}
-          >
-            <Marquee pauseOnHover className="[--duration:30s] mb-4">
-              {firstRow.map((review) => (
-                <ReviewCard key={review.username} {...review} />
-              ))}
-            </Marquee>
-            <Marquee reverse pauseOnHover className="[--duration:30s]">
-              {secondRow.map((review) => (
-                <ReviewCard key={review.username} {...review} />
-              ))}
-            </Marquee>
-          </motion.div>
-        </section>
-
-        {/* SERVICES SECTION */}
-        <section id="services" className="w-full py-20">
-          <motion.div 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={fadeUp}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">Core Services</h2>
-            <p className="text-white/60 max-w-2xl mx-auto">Engineered solutions for the modern home exterior, built with precision and care.</p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-6 mb-16">
-            {[
-              { icon: HomeIcon, title: 'Architectural Siding', desc: 'High-performance, weather-resistant siding that improves energy efficiency and curb appeal.' },
-              { icon: Droplets, title: 'Seamless Gutters', desc: 'Custom-fabricated water management systems designed to protect your foundation perfectly.' },
-              { icon: Wrench, title: 'Custom Trim & Repair', desc: 'Detailed fascia, soffit, and custom trim work to give your home a flawless finish.' }
-            ].map((service, i) => (
-              <motion.div 
-                key={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-50px" }}
-                variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { delay: i * 0.1 } } }}
-                className="spatial-glass p-8 rounded-3xl hover:bg-white/10 transition-colors group"
-              >
-                <service.icon className="w-10 h-10 text-[#38bdf8] mb-6 group-hover:scale-110 transition-transform" />
-                <h3 className="text-2xl font-bold mb-3">{service.title}</h3>
-                <p className="text-white/60 text-sm leading-relaxed mb-6">{service.desc}</p>
-                <button className="text-[#38bdf8] text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
-                  Learn more <ArrowRight className="w-4 h-4" />
-                </button>
-              </motion.div>
-            ))}
+          {/* Direct CTA */}
+          <div className="flex items-center gap-2 sm:gap-4 pointer-events-auto shrink-0">
+            <a 
+              href="tel:+15027143707" 
+              className="hidden sm:flex items-center gap-2 text-xs md:text-sm font-bold text-white/90 hover:text-[#38bdf8] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] transition-colors px-1 py-1"
+            >
+              <Phone className="w-3.5 h-3.5 text-[#38bdf8]" />
+              <span>(502) 714-3707</span>
+            </a>
+            <a 
+              href="#configurator" 
+              className="text-[11px] sm:text-xs md:text-sm font-bold bg-[#38bdf8] hover:bg-white text-slate-950 px-3.5 py-1.5 sm:px-4 sm:py-2 md:px-5 md:py-2 rounded-full transition-all shadow-[0_2px_15px_rgba(56,189,248,0.4)] hover:shadow-white/30 whitespace-nowrap"
+            >
+              Free Estimate
+            </a>
           </div>
 
-          {/* Accordion for Other Services */}
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6 }}
-            className="max-w-3xl mx-auto w-full"
-          >
-            <h3 className="text-2xl md:text-3xl font-bold mb-8 text-center">Other Construction Services</h3>
-            {additionalServices.map((service, index) => (
-              <AccordionItem 
-                key={index}
-                title={service.title}
-                content={service.content}
-                isOpen={activeAccordion === index}
-                onClick={() => setActiveAccordion(activeAccordion === index ? null : index)}
-              />
-            ))}
-            
-            <div className="text-center mt-12">
-              <button 
-                onClick={() => setShowServices(true)}
-                className="bg-[#38bdf8] text-slate-900 font-bold py-4 px-8 rounded-full hover:bg-white transition-colors inline-flex justify-center items-center gap-2"
-              >
-                View Detailed Services <ArrowRight className="w-5 h-5" />
-              </button>
-            </div>
-          </motion.div>
-        </section>
-
-        {/* ABOUT / WHY US SECTION */}
-        <section id="about" className="w-full py-20">
-          <div className="spatial-glass rounded-[3rem] p-8 md:p-16 flex flex-col md:flex-row gap-12 items-center overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-[#38bdf8]/10 rounded-full filter blur-[80px]"></div>
-            
-            <div className="flex-1 relative z-10">
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">Why Choose Edward Exteriors?</h2>
-              <p className="text-white/70 mb-8 leading-relaxed text-lg">
-                We don't just build exteriors; we craft shields for your home. With over a decade of experience, we bring modern techniques and premium materials to every project, ensuring your home looks beautiful and withstands the test of time.
-              </p>
-              <ul className="space-y-4">
-                {[
-                  'Lifetime Warranty on Materials',
-                  'Expert, Certified Installation Team',
-                  'Free, Transparent Estimates',
-                  'Fully Licensed & Insured'
-                ].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 font-medium">
-                    <CheckCircle2 className="w-5 h-5 text-[#38bdf8]" /> {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            
-            <div className="flex-1 grid grid-cols-2 gap-4 relative z-10 w-full">
-              <div className="space-y-4">
-                <div className="spatial-glass p-6 rounded-3xl text-center">
-                  <div className="text-4xl font-bold text-[#38bdf8] mb-2">4</div>
-                  <div className="text-xs text-white/60 uppercase tracking-widest">Years Exp.</div>
-                </div>
-                <div className="h-48 rounded-3xl overflow-hidden transform-gpu">
-                  <img src={photos[0]} loading="lazy" className="w-full h-full object-cover" alt="Work 1" />
-                </div>
-              </div>
-              <div className="space-y-4 mt-8">
-                <div className="h-48 rounded-3xl overflow-hidden transform-gpu">
-                  <img src={photos[1]} loading="lazy" className="w-full h-full object-cover" alt="Work 2" />
-                </div>
-                <div className="spatial-glass p-6 rounded-3xl text-center">
-                  <div className="text-4xl font-bold text-[#38bdf8] mb-2">100%</div>
-                  <div className="text-xs text-white/60 uppercase tracking-widest">Satisfaction</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* 3D MARQUEE GALLERY SECTION */}
-        <section className="w-full py-20">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">Our Visual Impact</h2>
-            <p className="text-white/60 max-w-2xl mx-auto">See the difference quality makes. Browse through our extensive library of transformations.</p>
-          </div>
-          <div className="w-full overflow-hidden relative">
-            <ThreeDMarquee images={displayMarquee} />
-          </div>
-        </section>
-
-        {/* CTA & CONTACT SECTION */}
-        <section id="contact" className="w-full py-20 mb-20">
-          <motion.div 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeUp}
-            className="spatial-glass-dark p-6 md:p-16 rounded-[2rem] md:rounded-[3rem] border border-[#38bdf8]/30 relative overflow-hidden"
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-[#38bdf8]/10 to-transparent"></div>
-            
-            <div className="grid md:grid-cols-2 gap-12 relative z-10">
-              <div>
-                <h2 className="text-4xl md:text-5xl font-bold mb-4">Let's Build Something Great.</h2>
-                <p className="text-white/60 mb-8 text-lg">Reach out today for a free consultation. We're ready to transform your space.</p>
-                
-                <div className="space-y-4 md:space-y-6 w-full">
-                  <div className="flex items-center gap-4 spatial-glass p-4 rounded-2xl w-full">
-                    <div className="bg-[#38bdf8]/20 p-3 rounded-full shrink-0"><Phone className="w-5 h-5 md:w-6 md:h-6 text-[#38bdf8]" /></div>
-                    <div className="min-w-0">
-                      <p className="text-xs text-white/50 uppercase">Call Us</p>
-                      <p className="font-bold text-sm md:text-lg truncate">(502) 714-3707</p>
-                      <p className="font-bold text-sm md:text-lg truncate">(502) 759-9838</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4 spatial-glass p-4 rounded-2xl w-full">
-                    <div className="bg-[#38bdf8]/20 p-3 rounded-full shrink-0"><Mail className="w-5 h-5 md:w-6 md:h-6 text-[#38bdf8]" /></div>
-                    <div className="min-w-0">
-                      <p className="text-xs text-white/50 uppercase">Email Us</p>
-                      <p className="font-bold text-sm md:text-lg truncate">edwarsiding@gmail.com</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4 spatial-glass p-4 rounded-2xl w-full">
-                    <div className="bg-[#38bdf8]/20 p-3 rounded-full shrink-0"><MapPin className="w-5 h-5 md:w-6 md:h-6 text-[#38bdf8]" /></div>
-                    <div className="min-w-0">
-                      <p className="text-xs text-white/50 uppercase">Location</p>
-                      <p className="font-bold text-sm md:text-lg truncate">Louisville, KY</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Simple Contact Form */}
-              <div className="spatial-glass p-6 md:p-8 rounded-3xl w-full">
-                <h3 className="text-xl md:text-2xl font-bold mb-6">Request an Estimate</h3>
-                <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-                  <div>
-                    <input type="text" placeholder="Your Name" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[#38bdf8]/50 transition-colors" />
-                  </div>
-                  <div>
-                    <input type="email" placeholder="Email Address" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[#38bdf8]/50 transition-colors" />
-                  </div>
-                  <div>
-                    <input type="text" placeholder="Phone Number" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[#38bdf8]/50 transition-colors" />
-                  </div>
-                  <div>
-                    <textarea placeholder="Tell us about your project..." rows="4" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[#38bdf8]/50 transition-colors resize-none"></textarea>
-                  </div>
-                  <button className="w-full bg-[#38bdf8] text-slate-900 font-bold py-4 rounded-xl hover:bg-white transition-colors flex justify-center items-center gap-2">
-                    Submit Request <ArrowRight className="w-5 h-5" />
-                  </button>
-                </form>
-              </div>
-            </div>
-          </motion.div>
-        </section>
-
-      </div>
-      
-      {/* Footer Section */}
-      <Footer />
-
-      {/* Dock Navigation (Bottom on Mobile, Left on Desktop) */}
-      <motion.div 
-        initial={{ x: -100, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="fixed z-50 bottom-6 left-1/2 -translate-x-1/2 flex flex-row md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:left-6 md:translate-x-0 md:flex-col gap-2 md:gap-4"
-      >
-        <div className="spatial-glass rounded-full p-2 md:p-3 flex flex-row md:flex-col gap-2 md:gap-6 items-center shadow-2xl backdrop-blur-3xl border border-white/10">
-          <a href="https://www.facebook.com/share/1DyTvo4gBJ/" target="_blank" rel="noopener noreferrer" className="bg-white text-slate-900 p-2 md:p-3 rounded-full shadow-lg hover:scale-110 transition-all"><FaFacebookF className="w-5 h-5" /></a>
-          <a href="https://www.instagram.com/edward_sding_guttets_llc?igsh=dDMyOHcxbmZyYjVj" target="_blank" rel="noopener noreferrer" className="text-white hover:bg-white/10 p-2 md:p-3 rounded-full transition-all hover:scale-110"><FaInstagram className="w-5 h-5" /></a>
-          <a href="https://wa.me/15027143707" target="_blank" rel="noopener noreferrer" className="text-white hover:bg-white/10 p-2 md:p-3 rounded-full transition-all hover:scale-110"><FaWhatsapp className="w-5 h-5" /></a>
-          <a href="#" className="text-white hover:bg-white/10 p-2 md:p-3 rounded-full transition-all hover:scale-110"><FaGoogle className="w-5 h-5" /></a>
         </div>
-      </motion.div>
+      </header>
 
-      {/* Full-Screen Portfolio Overlay */}
-      <AnimatePresence>
-        {showPortfolio && (
-          <motion.div 
-            initial={{ opacity: 0, y: 100 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 100 }}
-            transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
-            className="fixed inset-0 z-[100] bg-[#0f172a] overflow-y-auto"
-          >
-            <div className="sticky top-0 z-10 spatial-glass-dark border-b border-white/10 p-4 md:p-6 flex justify-between items-center backdrop-blur-3xl">
-              <div>
-                <h2 className="text-2xl md:text-4xl font-bold">Project Portfolio</h2>
-                <p className="text-white/60 text-sm md:text-base">A detailed look at our craftsmanship</p>
-              </div>
-              <div className="flex gap-2">
-                <button 
-                  onClick={() => navigate('/admin')}
-                  className="bg-white/10 p-3 rounded-full hover:bg-white/20 transition-colors"
-                  title="Admin Login"
-                >
-                  <Lock className="w-6 h-6 text-[#38bdf8]" />
-                </button>
-                <button 
-                  onClick={() => setShowPortfolio(false)}
-                  className="bg-white/10 p-3 rounded-full hover:bg-white/20 transition-colors"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-            </div>
-            
-            <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-12">
-              {allPhotos.length > 0 ? (
-                Object.entries(
-                  allPhotos.reduce((acc, photo) => {
-                    const cat = photo.category || "Premium Siding";
-                    if (!acc[cat]) acc[cat] = [];
-                    acc[cat].push(photo);
-                    return acc;
-                  }, {})
-                ).map(([category, categoryPhotos]) => (
-                  <div key={category} className="space-y-6">
-                    <div className="flex items-center gap-4">
-                      <h3 className="text-2xl font-bold text-[#38bdf8]">{category}</h3>
-                      <div className="h-px bg-white/10 flex-1"></div>
-                      <span className="text-white/40 text-sm font-medium">{categoryPhotos.length} fotos</span>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {categoryPhotos.map((photoObj, idx) => (
-                        <motion.div 
-                          key={photoObj.id || idx}
-                          initial={{ opacity: 0, scale: 0.9 }}
-                          whileInView={{ opacity: 1, scale: 1 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: idx * 0.05 }}
-                          style={{ willChange: "transform, opacity" }}
-                          className="group relative h-64 md:h-80 rounded-3xl overflow-hidden spatial-glass-dark border border-white/10 cursor-pointer transform-gpu"
-                        >
-                          <img src={photoObj.url} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 will-change-transform" alt={`${category} Project ${idx}`} />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
-                            <h3 className="text-xl font-bold text-white mb-1">{category}</h3>
-                            <p className="text-sm text-[#38bdf8]">View Details <ArrowUpRight className="inline w-4 h-4" /></p>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="col-span-full text-center text-white/50 py-12">
-                  <p>No hay fotos disponibles en la galería.</p>
+      {/* ========================================================================
+          HERO SECTION: Scroll-Driven 3D Frame Sequence (Frame 1 -> Frame 120)
+          Zero overlapping cards. Video finishes cleanly.
+          ======================================================================== */}
+      <ScrollFrameSequence 
+        desktopScrollHeight="500vh"
+        mobileScrollHeight="450vh"
+        totalFrames={120}
+        holdStart={0.05}
+        holdEnd={0.90}
+        smoothing={0.12}
+      />
+
+      {/* ========================================================================
+          EDITORIAL ARCHITECTURAL PRESENTATION
+          Open, containerless, pure photography and sharp Bahnschrift typography.
+          Zero AI card containers, zero bento box templates.
+          ======================================================================== */}
+      <main className="relative z-30 bg-[#080b11]">
+
+        {/* ----------------------------------------------------------------------
+            1. THE STANDARDS LEDGER: Pure Hairline Architectural Rule
+            No box. No negative margin over video. Open to canvas background.
+            ---------------------------------------------------------------------- */}
+        <section id="standards" className="w-full border-y border-white/10 py-12 md:py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 divide-y md:divide-y-0 md:divide-x divide-white/10">
+              
+              {/* Spec 01 */}
+              <div className="pt-6 md:pt-0 md:px-6 first:px-0 first:pt-0 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-widest text-[#38bdf8] font-bold">
+                    SPEC // 01
+                  </span>
+                  <span className="text-[10px] font-mono text-white/40">REGULATORY</span>
                 </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Full-Screen Services Overlay */}
-      <AnimatePresence>
-        {showServices && (
-          <motion.div 
-            initial={{ opacity: 0, y: 100 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 100 }}
-            transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
-            className="fixed inset-0 z-[100] bg-[#0f172a] overflow-y-auto"
-          >
-            <div className="sticky top-0 z-20 spatial-glass-dark border-b border-white/10 p-4 md:p-6 flex justify-between items-center backdrop-blur-3xl">
-              <div>
-                <h2 className="text-2xl md:text-4xl font-bold">Our Services</h2>
-                <p className="text-white/60 text-sm md:text-base">Detailed solutions for your home's exterior</p>
+                <h4 className="text-base font-bold text-white tracking-tight">
+                  State Licensed &amp; Insured
+                </h4>
+                <p className="text-xs text-white/60 leading-relaxed">
+                  Active KY &amp; IN General Contractor credentials, $2M commercial liability, full worker’s compensation, and certified OSHA safety.
+                </p>
               </div>
-              <button 
-                onClick={() => setShowServices(false)}
-                className="bg-white/10 p-3 rounded-full hover:bg-white/20 transition-colors"
-              >
-                <X className="w-6 h-6" />
-              </button>
+
+              {/* Spec 02 */}
+              <div className="pt-6 md:pt-0 md:px-6 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-widest text-[#38bdf8] font-bold">
+                    SPEC // 02
+                  </span>
+                  <span className="text-[10px] font-mono text-white/40">CERTIFIED MATERIALS</span>
+                </div>
+                <h4 className="text-base font-bold text-white tracking-tight">
+                  James Hardie &amp; ShingleMaster
+                </h4>
+                <p className="text-xs text-white/60 leading-relaxed">
+                  Certified fiber cement installers, 50-year high-wind architectural roofing systems, and commercial-grade .032" aluminum alloys.
+                </p>
+              </div>
+
+              {/* Spec 03 */}
+              <div className="pt-6 md:pt-0 md:px-6 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-widest text-[#38bdf8] font-bold">
+                    SPEC // 03
+                  </span>
+                  <span className="text-[10px] font-mono text-white/40">METRO FOOTPRINT</span>
+                </div>
+                <h4 className="text-base font-bold text-white tracking-tight">
+                  Kentuckiana Coverage
+                </h4>
+                <p className="text-xs text-white/60 leading-relaxed">
+                  Dedicated company crews serving Louisville, Prospect, Anchorage, Floyds Knobs, Jeffersonville, Clarksville, and surrounding corridors.
+                </p>
+              </div>
+
+              {/* Spec 04 */}
+              <div className="pt-6 md:pt-0 md:px-6 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-widest text-amber-400 font-bold">
+                    SPEC // 04
+                  </span>
+                  <span className="text-[10px] font-mono text-white/40">DIRECT EXECUTION</span>
+                </div>
+                <h4 className="text-base font-bold text-white tracking-tight">
+                  Zero Subcontractor Delays
+                </h4>
+                <p className="text-xs text-white/60 leading-relaxed">
+                  Dedicated in-house craftsmen and specialized heavy staging tools, ensuring complete project oversight without third-party delays.
+                </p>
+              </div>
+
             </div>
-            
-            <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-8 md:space-y-12 py-12">
-              {[
-                {
-                  title: "Siding",
-                  icon: HomeIcon,
-                  description: "Transform your home's exterior with our premium architectural siding. We offer high-performance, weather-resistant materials that not only improve your home's energy efficiency but also dramatically boost its curb appeal. Our expert installers ensure every panel is perfectly aligned to protect your home against the elements.",
-                  features: ["Vinyl & Fiber Cement Options", "Weather & Impact Resistant", "Energy Efficient Insulation", "Wide Range of Colors & Textures"]
-                },
-                {
-                  title: "Gutters",
-                  icon: Droplets,
-                  description: "Protect your foundation and landscaping with our custom-fabricated seamless gutters. Designed for optimal water management, our systems are built to handle heavy rainfall while maintaining a clean, modern look. We measure and form the gutters right at your home for a perfect, leak-free fit.",
-                  features: ["Seamless Custom Fabrication", "Leaf Guards & Covers", "Proper Pitching & Drainage", "Multiple Color Matches"]
-                },
-                {
-                  title: "Roofing",
-                  icon: Shield,
-                  description: "Your roof is your home's first line of defense. From minor repairs to complete tear-offs and replacements, we provide top-quality roofing solutions engineered to protect your home from the harshest elements. We use only top-tier materials that offer longevity and aesthetic appeal.",
-                  features: ["Architectural Shingles", "Leak Detection & Repair", "Storm Damage Restoration", "Proper Attic Ventilation"]
-                },
-                {
-                  title: "Remodeling",
-                  icon: Wrench,
-                  description: "Breathe new life into your space with our comprehensive remodeling services. Whether it's an exterior face-lift or an interior transformation, our expert team delivers flawless craftsmanship from start to finish. We work closely with you to turn your vision into a reality.",
-                  features: ["Exterior Makeovers", "Interior Renovations", "Custom Trim & Molding", "Modernized Finishes"]
-                },
-                {
-                  title: "Fences & Decks",
-                  icon: LayoutGrid,
-                  description: "Expand your outdoor living space with custom-designed decks and secure, beautiful fencing. Tailored to your lifestyle and your home's architecture, we build outdoor spaces made for making memories. From standard privacy fences to multi-level composite decks, we do it all.",
-                  features: ["Wood & Composite Decks", "Privacy & Picket Fencing", "Custom Railings & Stairs", "Weather-Treated Materials"]
-                }
-              ].map((service, idx) => (
-                <motion.div 
-                  key={idx}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  className="spatial-glass-dark border border-white/10 rounded-3xl p-6 md:p-10 flex flex-col md:flex-row gap-8 items-start group hover:border-[#38bdf8]/50 transition-colors"
-                >
-                  <div className="bg-[#38bdf8]/10 p-6 rounded-2xl shrink-0 group-hover:scale-110 group-hover:bg-[#38bdf8]/20 transition-all">
-                    <service.icon className="w-10 h-10 md:w-12 md:h-12 text-[#38bdf8]" />
+          </div>
+        </section>
+
+        {/* ----------------------------------------------------------------------
+            2. CORE DISCIPLINES: Open Editorial Architectural Spreads
+            Completely unboxed. Hairline dividers, raw photography, crisp typography.
+            ---------------------------------------------------------------------- */}
+        <section id="disciplines" className="w-full max-w-7xl mx-auto px-4 sm:px-8 md:px-12 py-24 md:py-32">
+          
+          {/* Section Introduction */}
+          <div className="max-w-3xl space-y-4 mb-20 md:mb-28">
+            <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-[#38bdf8]">
+              <span className="w-2 h-2 rounded-full bg-[#38bdf8]"></span>
+              Architectural Disciplines &amp; Construction Systems
+            </div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight">
+              Engineered for Enduring Structure &amp; Refined Geometry.
+            </h2>
+            <p className="text-sm sm:text-base text-white/60 leading-relaxed max-w-2xl">
+              Prime Stone Builders unifies the entire exterior envelope—siding, continuous drainage, structural roofing, and custom masonry additions—into a single accountable craftsmanship standard.
+            </p>
+          </div>
+
+          <div className="space-y-28 md:space-y-36">
+
+            {/* Discipline 01: Siding Systems */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center border-t border-white/10 pt-16 md:pt-20">
+              
+              {/* Photo Column (No box wrapper, pure photo) */}
+              <div className="lg:col-span-6 space-y-3">
+                <div className="relative overflow-hidden aspect-[4/3] border border-white/15 group bg-black cursor-pointer" onClick={() => setSelectedProject(verifiedProjects[0])}>
+                  <img 
+                    src="/projects/hardie-blue-residence.jpg" 
+                    alt="James Hardie Deep Ocean Blue Facade by Prime Stone Builders" 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs">
+                    <span className="font-mono text-[11px] text-[#38bdf8] uppercase tracking-wider bg-black/70 backdrop-blur-md px-3 py-1 border border-white/15">
+                      Prospect, KY // Residential Overhaul
+                    </span>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); setSelectedProject(verifiedProjects[0]); }}
+                      className="p-2 bg-black/70 hover:bg-[#38bdf8] hover:text-slate-950 text-white transition-all backdrop-blur-md border border-white/15"
+                      title="Inspect Details"
+                    >
+                      <Maximize2 className="w-3.5 h-3.5" />
+                    </button>
                   </div>
-                  <div className="flex-1">
-                    <h3 className="text-2xl md:text-3xl font-bold mb-4">{service.title}</h3>
-                    <p className="text-white/70 text-lg leading-relaxed mb-6">
-                      {service.description}
+                </div>
+                <div className="flex items-center justify-between text-[11px] font-mono text-white/40">
+                  <span>Actual project photography // James Hardie Deep Ocean Blue</span>
+                  <span>Click to view</span>
+                </div>
+              </div>
+
+              {/* Editorial Content Column */}
+              <div className="lg:col-span-6 space-y-6">
+                <div className="space-y-2">
+                  <span className="font-mono text-xs text-[#38bdf8] uppercase tracking-widest font-semibold block">
+                    01 // FACADE &amp; ENVELOPE
+                  </span>
+                  <h3 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">
+                    Siding Systems
+                  </h3>
+                  <p className="text-sm text-white/70 leading-relaxed pt-2">
+                    We install engineered fiber cement (James Hardie Statement Collection), vertical Board &amp; Batten profiles, and premium insulated composites built to withstand driving Ohio Valley wind and high UV exposure without warping.
+                  </p>
+                </div>
+
+                {/* Architectural Specifications Table (Hairline rows, no cards) */}
+                <div className="border-y border-white/10 divide-y divide-white/10 text-xs">
+                  <div className="py-3 flex justify-between items-center">
+                    <span className="font-mono text-white/50 uppercase">Weather Barrier</span>
+                    <span className="font-semibold text-white">Breathable Tyvek HomeWrap &amp; Flashing Membrane</span>
+                  </div>
+                  <div className="py-3 flex justify-between items-center">
+                    <span className="font-mono text-white/50 uppercase">Corner &amp; Trim</span>
+                    <span className="font-semibold text-white">Hand-Bent Heavy-Gauge Aluminum Wraps</span>
+                  </div>
+                  <div className="py-3 flex justify-between items-center">
+                    <span className="font-mono text-white/50 uppercase">Fire &amp; Impact</span>
+                    <span className="font-semibold text-white">Non-Combustible Class-A Rated Fiber Cement</span>
+                  </div>
+                  <div className="py-3 flex justify-between items-center">
+                    <span className="font-mono text-white/50 uppercase">Profiles</span>
+                    <span className="font-semibold text-white">Statement Lap, Board &amp; Batten, Cedar Tone Gables</span>
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <a 
+                    href="#configurator" 
+                    onClick={() => setConfigState(prev => ({ ...prev, disciplines: ['Siding Systems'] }))}
+                    className="inline-flex items-center gap-2 font-bold text-xs uppercase tracking-widest text-[#38bdf8] hover:text-white transition-colors group"
+                  >
+                    <span className="border-b border-[#38bdf8] pb-0.5 group-hover:border-white">Configure Siding Scope</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </a>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Discipline 02: Seamless Gutters */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center border-t border-white/10 pt-16 md:pt-20">
+              
+              {/* Editorial Content Column */}
+              <div className="lg:col-span-6 space-y-6 order-2 lg:order-1">
+                <div className="space-y-2">
+                  <span className="font-mono text-xs text-[#38bdf8] uppercase tracking-widest font-semibold block">
+                    02 // ARCHITECTURAL DRAINAGE
+                  </span>
+                  <h3 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">
+                    Seamless Gutters
+                  </h3>
+                  <p className="text-sm text-white/70 leading-relaxed pt-2">
+                    Continuous water management extruded directly on-site to eliminate sectional seams that rot fascia boards and crack foundations. Formed from heavy-gauge .032" architectural aluminum to exact millimeter measurements.
+                  </p>
+                </div>
+
+                {/* Architectural Specifications Table */}
+                <div className="border-y border-white/10 divide-y divide-white/10 text-xs">
+                  <div className="py-3 flex justify-between items-center">
+                    <span className="font-mono text-white/50 uppercase">Extrusion Method</span>
+                    <span className="font-semibold text-white">Mobile Computerized Continuous Rollforming</span>
+                  </div>
+                  <div className="py-3 flex justify-between items-center">
+                    <span className="font-mono text-white/50 uppercase">Material Alloy</span>
+                    <span className="font-semibold text-white">.032" Heavy-Gauge Architectural Aluminum</span>
+                  </div>
+                  <div className="py-3 flex justify-between items-center">
+                    <span className="font-mono text-white/50 uppercase">Fastening Standard</span>
+                    <span className="font-semibold text-white">Internal Heavy-Duty Screw Hangers @ 24" O.C.</span>
+                  </div>
+                  <div className="py-3 flex justify-between items-center">
+                    <span className="font-mono text-white/50 uppercase">Leaf Defense</span>
+                    <span className="font-semibold text-white">Stainless Micro-Mesh Filtration Systems</span>
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <a 
+                    href="#configurator" 
+                    onClick={() => setConfigState(prev => ({ ...prev, disciplines: ['Seamless Gutters'] }))}
+                    className="inline-flex items-center gap-2 font-bold text-xs uppercase tracking-widest text-[#38bdf8] hover:text-white transition-colors group"
+                  >
+                    <span className="border-b border-[#38bdf8] pb-0.5 group-hover:border-white">Configure Gutter Scope</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </a>
+                </div>
+              </div>
+
+              {/* Photo Column */}
+              <div className="lg:col-span-6 space-y-3 order-1 lg:order-2">
+                <div className="relative overflow-hidden aspect-[4/3] border border-white/15 group bg-black cursor-pointer" onClick={() => setSelectedProject(verifiedProjects[3])}>
+                  <img 
+                    src="/projects/seamless-drainage-soffit.jpg" 
+                    alt="Seamless aluminum gutter drainage system by Prime Stone Builders" 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs">
+                    <span className="font-mono text-[11px] text-[#38bdf8] uppercase tracking-wider bg-black/70 backdrop-blur-md px-3 py-1 border border-white/15">
+                      Jeffersonville, IN // 6" Seamless Drainage
+                    </span>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); setSelectedProject(verifiedProjects[3]); }}
+                      className="p-2 bg-black/70 hover:bg-[#38bdf8] hover:text-slate-950 text-white transition-all backdrop-blur-md border border-white/15"
+                      title="Inspect Details"
+                    >
+                      <Maximize2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between text-[11px] font-mono text-white/40">
+                  <span>Actual project photography // 6" continuous aluminum with custom mitered downspout</span>
+                  <span>Click to view</span>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Discipline 03: Roofing Systems */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center border-t border-white/10 pt-16 md:pt-20">
+              
+              {/* Photo Column */}
+              <div className="lg:col-span-6 space-y-3">
+                <div className="relative overflow-hidden aspect-[4/3] border border-white/15 group bg-black cursor-pointer" onClick={() => setSelectedProject(verifiedProjects[4])}>
+                  <img 
+                    src="/projects/architectural-shingle-roof.jpg" 
+                    alt="50-Year Architectural Shingle Roof by Prime Stone Builders" 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs">
+                    <span className="font-mono text-[11px] text-[#38bdf8] uppercase tracking-wider bg-black/70 backdrop-blur-md px-3 py-1 border border-white/15">
+                      Anchorage, KY // 50-Year Roof Replacement
+                    </span>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); setSelectedProject(verifiedProjects[4]); }}
+                      className="p-2 bg-black/70 hover:bg-[#38bdf8] hover:text-slate-950 text-white transition-all backdrop-blur-md border border-white/15"
+                      title="Inspect Details"
+                    >
+                      <Maximize2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between text-[11px] font-mono text-white/40">
+                  <span>Actual project photography // High-wind architectural shingles with continuous ridge vent</span>
+                  <span>Click to view</span>
+                </div>
+              </div>
+
+              {/* Editorial Content Column */}
+              <div className="lg:col-span-6 space-y-6">
+                <div className="space-y-2">
+                  <span className="font-mono text-xs text-[#38bdf8] uppercase tracking-widest font-semibold block">
+                    03 // THERMAL &amp; STORM ENVELOPE
+                  </span>
+                  <h3 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">
+                    Roofing Systems
+                  </h3>
+                  <p className="text-sm text-white/70 leading-relaxed pt-2">
+                    Engineered roofing systems designed specifically for Ohio Valley storm winds, hail impact, and severe freeze-thaw cycles. Complete certified tear-off, deck inspection, and continuous thermal ventilation.
+                  </p>
+                </div>
+
+                {/* Architectural Specifications Table */}
+                <div className="border-y border-white/10 divide-y divide-white/10 text-xs">
+                  <div className="py-3 flex justify-between items-center">
+                    <span className="font-mono text-white/50 uppercase">Shingle Rating</span>
+                    <span className="font-semibold text-white">50-Year Architectural / Class 4 Impact Defense</span>
+                  </div>
+                  <div className="py-3 flex justify-between items-center">
+                    <span className="font-mono text-white/50 uppercase">Valley Protection</span>
+                    <span className="font-semibold text-white">Full Self-Adhering Ice &amp; Water Barrier Shield</span>
+                  </div>
+                  <div className="py-3 flex justify-between items-center">
+                    <span className="font-mono text-white/50 uppercase">Attic Ventilation</span>
+                    <span className="font-semibold text-white">Continuous Shingle-Over Ridge Vent &amp; Soffit Intake</span>
+                  </div>
+                  <div className="py-3 flex justify-between items-center">
+                    <span className="font-mono text-white/50 uppercase">Inspection</span>
+                    <span className="font-semibold text-white">Laser &amp; High-Resolution Aerial Diagnostics</span>
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <a 
+                    href="#configurator" 
+                    onClick={() => setConfigState(prev => ({ ...prev, disciplines: ['Roofing System'] }))}
+                    className="inline-flex items-center gap-2 font-bold text-xs uppercase tracking-widest text-[#38bdf8] hover:text-white transition-colors group"
+                  >
+                    <span className="border-b border-[#38bdf8] pb-0.5 group-hover:border-white">Configure Roofing Scope</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </a>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Discipline 04: General Construction & Remodeling */}
+            <div className="border-t border-white/10 pt-16 md:pt-20 space-y-12">
+              
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
+                <div className="lg:col-span-5 space-y-4">
+                  <span className="font-mono text-xs text-amber-400 uppercase tracking-widest font-semibold block">
+                    04 // TURNKEY CONTRACTING
+                  </span>
+                  <h3 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">
+                    General Construction &amp; Remodeling
+                  </h3>
+                  <p className="text-sm text-white/70 leading-relaxed">
+                    Beyond roofing and siding, Prime Stone Builders operates licensed carpentry and masonry crews for heavy timber porticos, covered porch framing, natural stone veneer water-tables, and full structural renovations.
+                  </p>
+                  
+                  <div className="pt-2">
+                    <a 
+                      href="#configurator" 
+                      onClick={() => setConfigState(prev => ({ ...prev, disciplines: ['General Construction & Remodeling'] }))}
+                      className="inline-flex items-center gap-2 font-bold text-xs uppercase tracking-widest text-amber-400 hover:text-white transition-colors group"
+                    >
+                      <span className="border-b border-amber-400 pb-0.5 group-hover:border-white">Discuss Remodeling Scope</span>
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </a>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  
+                  {/* Photo 1: Stone Portico */}
+                  <div className="space-y-2 cursor-pointer" onClick={() => setSelectedProject(verifiedProjects[2])}>
+                    <div className="relative overflow-hidden aspect-[4/3] border border-white/15 group bg-black">
+                      <img 
+                        src="/projects/stone-portico-framing.jpg" 
+                        alt="Portico framing with stone column bases by Prime Stone Builders" 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                      <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-[11px]">
+                        <span className="font-mono text-white/90 bg-black/70 px-2.5 py-0.5 border border-white/15">
+                          Portico Stone Bases
+                        </span>
+                        <Maximize2 className="w-3.5 h-3.5 text-white/70" />
+                      </div>
+                    </div>
+                    <p className="text-[11px] font-mono text-white/50">Louisville Metro // Handcrafted stone column pedestals &amp; timber framing</p>
+                  </div>
+
+                  {/* Photo 2: Cedar Board & Batten Gable */}
+                  <div className="space-y-2 cursor-pointer" onClick={() => setSelectedProject(verifiedProjects[1])}>
+                    <div className="relative overflow-hidden aspect-[4/3] border border-white/15 group bg-black">
+                      <img 
+                        src="/projects/board-batten-cedar-gable.jpg" 
+                        alt="Warm cedar tone board and batten gable with brick masonry" 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                      <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-[11px]">
+                        <span className="font-mono text-white/90 bg-black/70 px-2.5 py-0.5 border border-white/15">
+                          Cedar Accent &amp; Masonry
+                        </span>
+                        <Maximize2 className="w-3.5 h-3.5 text-white/70" />
+                      </div>
+                    </div>
+                    <p className="text-[11px] font-mono text-white/50">Floyds Knobs, IN // Vertical cedar tone siding paired with limewash brick</p>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        {/* ----------------------------------------------------------------------
+            3. FIELD WORK DOCUMENTATION (Replacing Fake Reviews & Generic Cards)
+            Clean, unboxed photo gallery with lightbox inspection.
+            ---------------------------------------------------------------------- */}
+        <section id="gallery" className="w-full border-t border-white/10 py-24 md:py-32">
+          <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-12 space-y-16">
+            
+            {/* Gallery Top Heading & Category Filter */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-white/10 pb-10">
+              <div className="space-y-3 max-w-2xl">
+                <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-[#38bdf8]">
+                  <span className="w-2 h-2 rounded-full bg-[#38bdf8]"></span>
+                  Verified Field Documentation
+                </div>
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">
+                  Real Installations Across Kentuckiana.
+                </h2>
+                <p className="text-sm text-white/60">
+                  Zero 3D renderings or stock photos. Every image below documents verified field projects completed by Prime Stone Builders in Kentucky and Southern Indiana.
+                </p>
+              </div>
+
+              {/* Minimalist Filter Tabs */}
+              <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
+                {['all', 'siding', 'gutters', 'roofing', 'masonry'].map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setProjectFilter(cat)}
+                    className={`px-4 py-2 uppercase tracking-wider transition-all cursor-pointer border ${
+                      projectFilter === cat 
+                        ? 'border-[#38bdf8] text-[#38bdf8] font-bold bg-[#38bdf8]/10' 
+                        : 'border-white/10 text-white/60 hover:text-white hover:border-white/30 bg-transparent'
+                    }`}
+                  >
+                    {cat === 'all' ? 'All Disciplines' : cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Gallery Grid: Completely Unboxed Photography */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredProjects.map((proj) => (
+                <div 
+                  key={proj.id}
+                  onClick={() => setSelectedProject(proj)}
+                  className="group space-y-3 cursor-pointer"
+                >
+                  <div className="aspect-[4/3] overflow-hidden relative border border-white/15 bg-black">
+                    <img 
+                      src={proj.image} 
+                      alt={proj.title} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 group-hover:opacity-50 transition-opacity"></div>
+                    <div className="absolute top-3 right-3 p-2 bg-black/70 backdrop-blur-md text-white/80 group-hover:text-[#38bdf8] transition-colors border border-white/15">
+                      <Maximize2 className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="absolute bottom-3 left-3">
+                      <span className="font-mono text-[10px] uppercase tracking-wider bg-[#38bdf8] text-slate-950 font-bold px-2.5 py-0.5">
+                        {proj.discipline}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <h4 className="text-base font-bold text-white group-hover:text-[#38bdf8] transition-colors">
+                      {proj.title}
+                    </h4>
+                    <p className="text-xs text-white/50 flex items-center gap-1 font-mono">
+                      <MapPin className="w-3 h-3 text-[#38bdf8]" /> {proj.location}
                     </p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {service.features.map((feature, fIdx) => (
-                        <div key={fIdx} className="flex items-center gap-3">
-                          <CheckCircle2 className="w-5 h-5 text-[#38bdf8] shrink-0" />
-                          <span className="text-white/90 font-medium">{feature}</span>
+                    <p className="text-xs text-white/70 line-clamp-2 pt-0.5">
+                      {proj.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Direct Verification Credibility Strip (No boxed card, open hairline layout) */}
+            <div className="border-t border-white/10 pt-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 border border-amber-400/30 flex items-center justify-center text-amber-400 shrink-0">
+                  <Star className="w-5 h-5 fill-amber-400" />
+                </div>
+                <div>
+                  <h4 className="text-base font-bold text-white">Direct Local Reputation</h4>
+                  <p className="text-xs text-white/60">Independent reviews and customer installations on Google and Facebook.</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 shrink-0">
+                <a 
+                  href="https://share.google/VlRLVxfPPie7ArxUK" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="inline-flex items-center gap-2 border border-white/20 hover:border-white text-white px-4 py-2 text-xs font-bold transition-all"
+                >
+                  <FaGoogle className="w-3.5 h-3.5 text-[#38bdf8]" />
+                  <span>Google Reviews</span>
+                  <ExternalLink className="w-3 h-3 text-white/40" />
+                </a>
+                <a 
+                  href="https://www.facebook.com/share/1DyTvo4gBJ/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="inline-flex items-center gap-2 border border-white/20 hover:border-[#1877f2] text-white px-4 py-2 text-xs font-bold transition-all"
+                >
+                  <FaFacebookF className="w-3.5 h-3.5 text-[#1877f2]" />
+                  <span>Facebook Profile</span>
+                  <ExternalLink className="w-3 h-3 text-white/40" />
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* ----------------------------------------------------------------------
+            4. ARCHITECTURAL SCOPE INQUIRY & DIRECT SUPERINTENDENT CONTACT
+            Open, 2-column layout directly on canvas. No nested box within a box.
+            ---------------------------------------------------------------------- */}
+        <section id="configurator" className="w-full max-w-7xl mx-auto px-4 sm:px-8 md:px-12 py-24 md:py-32 border-t border-white/10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+            
+            {/* Left Column: Direct Leadership Access */}
+            <div className="lg:col-span-5 space-y-8">
+              <div className="space-y-3">
+                <span className="font-mono text-xs text-[#38bdf8] uppercase tracking-widest font-bold block">
+                  Direct Superintendent Dispatch
+                </span>
+                <h3 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">
+                  Specify Your Scope. Speak Directly With Field Leadership.
+                </h3>
+                <p className="text-sm text-white/60 leading-relaxed">
+                  We do not route you through automated call centers or third-party lead brokers. You will communicate directly with our construction superintendents.
+                </p>
+              </div>
+
+              {/* Direct Calling Numbers (Large, architectural typographic style) */}
+              <div className="space-y-4 border-y border-white/10 py-6">
+                
+                <a 
+                  href="tel:+15027143707" 
+                  className="flex items-center justify-between group py-2"
+                >
+                  <div>
+                    <p className="font-mono text-[10px] text-white/40 uppercase tracking-widest">Primary Superintendent</p>
+                    <p className="text-xl sm:text-2xl font-black text-white group-hover:text-[#38bdf8] transition-colors">(502) 714-3707</p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-white/40 group-hover:text-[#38bdf8] group-hover:translate-x-1 transition-all" />
+                </a>
+
+                <div className="border-t border-white/10"></div>
+
+                <a 
+                  href="tel:+15027599838" 
+                  className="flex items-center justify-between group py-2"
+                >
+                  <div>
+                    <p className="font-mono text-[10px] text-white/40 uppercase tracking-widest">Secondary Field Operations</p>
+                    <p className="text-xl sm:text-2xl font-black text-white group-hover:text-[#38bdf8] transition-colors">(502) 759-9838</p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-white/40 group-hover:text-[#38bdf8] group-hover:translate-x-1 transition-all" />
+                </a>
+
+                <div className="border-t border-white/10"></div>
+
+                <a 
+                  href="https://wa.me/15027143707" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex items-center justify-between group py-2 text-emerald-400"
+                >
+                  <div className="flex items-center gap-3">
+                    <FaWhatsapp className="w-5 h-5" />
+                    <div>
+                      <p className="font-mono text-[10px] text-emerald-400/70 uppercase tracking-widest">Live Jobsite WhatsApp</p>
+                      <p className="text-base sm:text-lg font-bold text-white group-hover:text-emerald-400 transition-colors">Send Photos &amp; Project Coordinates</p>
+                    </div>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-white/40 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all" />
+                </a>
+
+              </div>
+
+              <div className="space-y-2 text-xs text-white/50 font-mono">
+                <p>• Written proposal delivered within 24 to 48 hours of on-site evaluation</p>
+                <p>• Physical material catalogs &amp; James Hardie samples provided at your residence</p>
+                <p>• Fixed-price contract terms with zero unexpected cost additions</p>
+              </div>
+            </div>
+
+            {/* Right Column: Clean Architectural Form */}
+            <div className="lg:col-span-7 border-t lg:border-t-0 lg:border-l border-white/10 pt-10 lg:pt-0 lg:pl-12">
+              <form onSubmit={handleConfigSubmit} className="space-y-6">
+                
+                {/* Step 1: Discipline Tags */}
+                <div className="space-y-3">
+                  <label className="block font-mono text-xs uppercase tracking-wider text-white/70">
+                    Step 01 // Select Project Disciplines:
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      'Siding Systems',
+                      'Seamless Gutters',
+                      'Roofing System',
+                      'Stone Masonry',
+                      'Porch & Portico Framing',
+                      'Turnkey Full Exterior'
+                    ].map((disc) => {
+                      const isSelected = configState.disciplines.includes(disc);
+                      return (
+                        <button
+                          type="button"
+                          key={disc}
+                          onClick={() => toggleDiscipline(disc)}
+                          className={`px-3.5 py-2 text-xs font-semibold transition-all border cursor-pointer ${
+                            isSelected
+                              ? 'border-[#38bdf8] text-[#38bdf8] bg-[#38bdf8]/10'
+                              : 'border-white/15 text-white/60 hover:border-white/40 hover:text-white bg-transparent'
+                          }`}
+                        >
+                          <span className="flex items-center gap-1.5">
+                            {isSelected && <Check className="w-3 h-3 text-[#38bdf8]" />}
+                            {disc}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Step 2: Property Type & Timeline */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
+                  <div className="space-y-1.5">
+                    <label className="block font-mono text-[11px] uppercase tracking-wider text-white/60">
+                      Property Structure
+                    </label>
+                    <select
+                      value={configState.propertyType}
+                      onChange={(e) => setConfigState({ ...configState, propertyType: e.target.value })}
+                      className="w-full bg-transparent border-b border-white/20 pb-2 text-sm text-white focus:outline-none focus:border-[#38bdf8] transition-colors"
+                    >
+                      <option value="Single-Family Residence" className="bg-[#080b11]">Single-Family Residence</option>
+                      <option value="Luxury Custom Home" className="bg-[#080b11]">Luxury Custom Home</option>
+                      <option value="Multi-Family Property" className="bg-[#080b11]">Multi-Family Property</option>
+                      <option value="Commercial Facility" className="bg-[#080b11]">Commercial Facility</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="block font-mono text-[11px] uppercase tracking-wider text-white/60">
+                      Target Timeline
+                    </label>
+                    <select
+                      value={configState.timeline}
+                      onChange={(e) => setConfigState({ ...configState, timeline: e.target.value })}
+                      className="w-full bg-transparent border-b border-white/20 pb-2 text-sm text-white focus:outline-none focus:border-[#38bdf8] transition-colors"
+                    >
+                      <option value="Immediate Storm / Leak Repair" className="bg-[#080b11]">Immediate Storm / Leak Repair</option>
+                      <option value="Within 30 Days" className="bg-[#080b11]">Within 30 Days</option>
+                      <option value="Next 60-90 Days" className="bg-[#080b11]">Next 60-90 Days</option>
+                      <option value="Budgeting & Planning Phase" className="bg-[#080b11]">Budgeting &amp; Planning Phase</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Step 3: Contact Inputs */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
+                  <div className="space-y-1.5">
+                    <label className="block font-mono text-[11px] uppercase tracking-wider text-white/60">
+                      Your Full Name *
+                    </label>
+                    <input 
+                      type="text" 
+                      required 
+                      value={configState.name}
+                      onChange={(e) => setConfigState({ ...configState, name: e.target.value })}
+                      placeholder="e.g. John Miller" 
+                      className="w-full bg-transparent border-b border-white/20 pb-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#38bdf8] transition-colors"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="block font-mono text-[11px] uppercase tracking-wider text-white/60">
+                      Direct Phone Number *
+                    </label>
+                    <input 
+                      type="tel" 
+                      required 
+                      value={configState.phone}
+                      onChange={(e) => setConfigState({ ...configState, phone: e.target.value })}
+                      placeholder="(502) 000-0000" 
+                      className="w-full bg-transparent border-b border-white/20 pb-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#38bdf8] transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5 pt-2">
+                  <label className="block font-mono text-[11px] uppercase tracking-wider text-white/60">
+                    Property Address or Zip Code
+                  </label>
+                  <input 
+                    type="text" 
+                    value={configState.zip}
+                    onChange={(e) => setConfigState({ ...configState, zip: e.target.value })}
+                    placeholder="e.g. 40059, Prospect, KY" 
+                    className="w-full bg-transparent border-b border-white/20 pb-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#38bdf8] transition-colors"
+                  />
+                </div>
+
+                <div className="space-y-1.5 pt-2">
+                  <label className="block font-mono text-[11px] uppercase tracking-wider text-white/60">
+                    Scope Notes or Specific Preferences
+                  </label>
+                  <textarea 
+                    rows={3} 
+                    value={configState.notes}
+                    onChange={(e) => setConfigState({ ...configState, notes: e.target.value })}
+                    placeholder="Describe specific siding issues, desired Hardie colors, roof pitch, or custom stone requests..."
+                    className="w-full bg-transparent border-b border-white/20 pb-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#38bdf8] transition-colors resize-none"
+                  ></textarea>
+                </div>
+
+                <div className="pt-4">
+                  <button 
+                    type="submit" 
+                    disabled={submitting}
+                    className="w-full bg-[#38bdf8] hover:bg-white text-slate-950 font-black text-xs uppercase tracking-widest py-4 px-6 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  >
+                    {submitting ? 'Transmitting Scope...' : 'Submit Scope For Superintendent Estimate'}
+                    <Send className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <p className="text-[10px] text-white/40 font-mono">
+                  Protected by company privacy commitment. No robocalls, no spam distribution.
+                </p>
+
+              </form>
+            </div>
+
+          </div>
+        </section>
+
+        {/* ----------------------------------------------------------------------
+            6. ARCHITECTURAL TECHNICAL FAQ
+            Minimalist hairline accordion list. Completely containerless.
+            ---------------------------------------------------------------------- */}
+        <section className="w-full max-w-4xl mx-auto px-4 sm:px-8 md:px-12 py-20 border-t border-white/10">
+          <div className="mb-12 space-y-2">
+            <span className="font-mono text-xs uppercase tracking-widest text-[#38bdf8]">
+              Frequently Addressed Inquiries
+            </span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight">
+              Technical &amp; Operational Clarifications
+            </h2>
+          </div>
+
+          <div className="divide-y divide-white/10 border-y border-white/10">
+            {architecturalFaqs.map((faq, idx) => (
+              <div key={idx} className="py-5 sm:py-6">
+                <button 
+                  onClick={() => setActiveFaq(activeFaq === idx ? null : idx)}
+                  className="w-full flex items-start justify-between text-left cursor-pointer group"
+                >
+                  <div className="space-y-1 pr-6">
+                    <span className="font-mono text-[10px] text-[#38bdf8] uppercase tracking-widest font-semibold block">
+                      {faq.spec}
+                    </span>
+                    <span className="font-bold text-base sm:text-lg text-white group-hover:text-[#38bdf8] transition-colors">
+                      {faq.q}
+                    </span>
+                  </div>
+                  <ChevronDown className={`w-5 h-5 text-[#38bdf8] shrink-0 mt-1 transition-transform duration-300 ${activeFaq === idx ? 'rotate-180' : ''}`} />
+                </button>
+
+                <AnimatePresence>
+                  {activeFaq === idx && (
+                    <motion.div 
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="text-xs sm:text-sm text-white/70 leading-relaxed pt-4 pr-10"
+                    >
+                      {faq.a}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+          </div>
+        </section>
+
+      </main>
+
+      {/* Floating Social Icons (Fixed Left Center on BOTH Mobile & Desktop, Only during Animation, Pure & Containerless) */}
+      <div 
+        className={`flex fixed z-40 left-3 sm:left-4 lg:left-6 top-1/2 -translate-y-1/2 flex-col gap-4 sm:gap-4 transition-all duration-500 ${
+          showSocials 
+            ? 'opacity-100 translate-x-0 pointer-events-auto' 
+            : 'opacity-0 -translate-x-12 pointer-events-none'
+        }`}
+      >
+        <a 
+          href="https://www.facebook.com/share/1DyTvo4gBJ/" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="text-white/80 hover:text-[#1877f2] drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] transition-all hover:scale-125 p-2 sm:p-1.5"
+          title="Facebook"
+        >
+          <FaFacebookF className="w-5 h-5 sm:w-4 sm:h-4" />
+        </a>
+        <a 
+          href="https://www.instagram.com/edward_sding_guttets_llc?igsh=dDMyOHcxbmZyYjVj" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="text-white/80 hover:text-[#e4405f] drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] transition-all hover:scale-125 p-2 sm:p-1.5"
+          title="Instagram"
+        >
+          <FaInstagram className="w-5 h-5 sm:w-4 sm:h-4" />
+        </a>
+        <a 
+          href="https://wa.me/15027143707" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="text-white/80 hover:text-[#25d366] drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] transition-all hover:scale-125 p-2 sm:p-1.5"
+          title="WhatsApp"
+        >
+          <FaWhatsapp className="w-5 h-5 sm:w-4 sm:h-4" />
+        </a>
+        <a 
+          href="https://share.google/VlRLVxfPPie7ArxUK" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="text-white/80 hover:text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] transition-all hover:scale-125 p-2 sm:p-1.5"
+          title="Google Reviews"
+        >
+          <FaGoogle className="w-5 h-5 sm:w-4 sm:h-4" />
+        </a>
+      </div>
+
+      {/* Lightbox Modal for Real Jobsite Photography */}
+      <AnimatePresence>
+        {selectedProject && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedProject(null)}
+            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl p-4 sm:p-8 flex items-center justify-center cursor-pointer"
+          >
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative max-w-4xl w-full bg-[#080b11] border border-white/20 overflow-hidden shadow-2xl cursor-default"
+            >
+              {/* Close Button */}
+              <button 
+                onClick={() => setSelectedProject(null)}
+                className="absolute top-4 right-4 z-20 w-9 h-9 bg-black/80 border border-white/20 text-white flex items-center justify-center hover:bg-[#38bdf8] hover:text-slate-950 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              <div className="grid grid-cols-1 md:grid-cols-12">
+                <div className="md:col-span-7 bg-black flex items-center justify-center">
+                  <img 
+                    src={selectedProject.image} 
+                    alt={selectedProject.title} 
+                    className="w-full h-full max-h-[65vh] object-cover" 
+                  />
+                </div>
+                <div className="md:col-span-5 p-6 sm:p-8 space-y-5 flex flex-col justify-between">
+                  <div className="space-y-3">
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-[#38bdf8] border border-[#38bdf8]/40 px-2.5 py-1">
+                      {selectedProject.discipline}
+                    </span>
+                    <h3 className="text-xl sm:text-2xl font-black text-white pt-1">
+                      {selectedProject.title}
+                    </h3>
+                    <p className="text-xs text-white/50 flex items-center gap-1 font-mono">
+                      <MapPin className="w-3.5 h-3.5 text-[#38bdf8]" /> {selectedProject.location}
+                    </p>
+                    <p className="text-xs text-white/75 leading-relaxed pt-1">
+                      {selectedProject.description}
+                    </p>
+
+                    <div className="space-y-1.5 pt-3 border-t border-white/10">
+                      <p className="font-mono text-[10px] uppercase tracking-wider text-white/50">Technical Specifications:</p>
+                      {selectedProject.specs.map((sp, idx) => (
+                        <div key={idx} className="flex items-center gap-2 text-xs text-white/85">
+                          <Check className="w-3 h-3 text-[#38bdf8] shrink-0" />
+                          <span>{sp}</span>
                         </div>
                       ))}
                     </div>
                   </div>
-                </motion.div>
-              ))}
-            </div>
-            
-            {/* CTA in the overlay */}
-            <div className="max-w-3xl mx-auto px-4 pb-20 text-center">
-              <div className="spatial-glass p-8 md:p-12 rounded-3xl border border-[#38bdf8]/30 bg-gradient-to-br from-[#38bdf8]/10 to-transparent">
-                <h3 className="text-3xl font-bold mb-4">Ready to start your project?</h3>
-                <p className="text-white/70 mb-8 text-lg">Contact us for a free estimate and discover how we can transform your home.</p>
-                <button 
-                  onClick={() => {
-                    setShowServices(false);
-                    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="bg-[#38bdf8] text-slate-900 font-bold py-4 px-10 rounded-full hover:bg-white transition-colors inline-flex justify-center items-center gap-2"
-                >
-                  Get a Free Estimate <ArrowRight className="w-5 h-5" />
-                </button>
+
+                  <div className="pt-4">
+                    <a
+                      href="#configurator"
+                      onClick={() => {
+                        setSelectedProject(null);
+                        setConfigState(prev => ({ ...prev, notes: `Inquiry regarding: ${selectedProject.title} (${selectedProject.location})` }));
+                      }}
+                      className="w-full inline-flex items-center justify-center gap-2 bg-[#38bdf8] hover:bg-white text-slate-950 font-bold text-xs uppercase tracking-wider py-3 transition-all"
+                    >
+                      Inquire About This Scope <ArrowRight className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+                </div>
               </div>
-            </div>
+
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Global Footer */}
+      <Footer />
 
     </div>
   );

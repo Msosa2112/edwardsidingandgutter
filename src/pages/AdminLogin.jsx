@@ -10,7 +10,7 @@ export default function AdminLogin() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (email === 'edwardsidingandgutters@gmail.com' && password === 'Edwardsiding00@!') {
+    if ((email === 'primestonebuilders@gmail.com' || email === 'edwardsidingandgutters@gmail.com') && (password === 'Primestone00@!' || password === 'Edwardsiding00@!')) {
       localStorage.setItem('isAdmin', 'true');
       navigate('/admin/dashboard');
     } else {
@@ -23,9 +23,9 @@ export default function AdminLogin() {
       <div className="spatial-glass-dark p-8 rounded-3xl border border-white/10 w-full max-w-md shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-[#38bdf8]/20 rounded-full filter blur-[50px]"></div>
         <div className="text-center mb-8 relative z-10">
-          <img src="/logo.png" alt="Edward Siding & Gutter" className="mx-auto h-24 object-contain filter brightness-110 mb-6 drop-shadow-lg" />
-          <h1 className="text-3xl font-bold mb-2">Admin Panel</h1>
-          <p className="text-white/60">Inicia sesión para administrar las fotos</p>
+          <img src="/logo.png" alt="Prime Stone Builders" className="mx-auto h-20 object-contain filter brightness-110 mb-6 drop-shadow-lg" />
+          <h1 className="text-3xl font-bold mb-2">Prime Stone Admin</h1>
+          <p className="text-white/60">Inicia sesión para administrar el portafolio</p>
         </div>
         
         {error && (

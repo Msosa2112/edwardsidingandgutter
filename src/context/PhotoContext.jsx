@@ -38,7 +38,8 @@ export const PhotoProvider = ({ children }) => {
       
       setPhotos(loadedPhotos);
     } catch (err) {
-      console.error("Failed to load photos", err);
+      console.warn("Notice: Remote photo gallery offline, using local assets.", err.message);
+      setPhotos([]);
     } finally {
       setLoading(false);
     }

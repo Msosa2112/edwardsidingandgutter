@@ -22,3 +22,13 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local working assets, raw dumps & scratch files
+fotos/
+documentos/
+generate_*.py
+Sin título-1.*
+logo cuadrado.png
+public/fleet/
+*.pdf
+!public/*.pdf

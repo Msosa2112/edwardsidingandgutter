@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 @theme {
+  --font-sans: 'Bahnschrift', 'DIN Alternate', 'Barlow Semi Condensed', 'Barlow', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Bahnschrift', 'DIN Alternate', 'Barlow Semi Condensed', sans-serif;
   --color-brand-navy: #0f172a;
   --color-brand-charcoal: #1e293b;
   --color-brand-accent: #38bdf8;
@@ -9,10 +11,16 @@
 }
 
 @layer base {
+  html, body {
+    overflow-x: clip;
+    margin: 0;
+    padding: 0;
+  }
   body {
     background-color: var(--color-brand-navy);
     color: white;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Bahnschrift', 'DIN Alternate', 'Barlow Semi Condensed', 'Barlow', -apple-system, BlinkMacSystemFont, sans-serif;
+    letter-spacing: 0.01em;
   }
 }
 
@@ -74,6 +82,4 @@
   100% { transform: translateX(100%); }
 }
 
-html {
-  scroll-behavior: smooth;
-}
+
