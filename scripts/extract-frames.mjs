@@ -96,9 +96,21 @@ async function extract() {
     ]);
 
     const mobileFrames = fs.readdirSync(CONFIG.mobileOutDir).filter(f => f.endsWith('.webp'));
-    console.log(`[OK] Mobile frames generated: ${mobileFrames.length}`);
+    // Overwrite frame 120 with clean house from frame 119 (eliminates old baked-in logo)
+    if (fs.existsSync(path.join(CONFIG.desktopOutDir, 'frame-0119.webp'))) {
+      fs.copyFileSync(
+        path.join(CONFIG.desktopOutDir, 'frame-0119.webp'),
+        path.join(CONFIG.desktopOutDir, 'frame-0120.webp')
+      );
+    }
+    if (fs.existsSync(path.join(CONFIG.mobileOutDir, 'frame-0119.webp'))) {
+      fs.copyFileSync(
+        path.join(CONFIG.mobileOutDir, 'frame-0119.webp'),
+        path.join(CONFIG.mobileOutDir, 'frame-0120.webp')
+      );
+    }
 
-    console.log('\n=== Extraction Complete! ===');
+    console.log('\n=== Extraction Complete! Clean house preserved on final frame. ===');
   } catch (error) {
     console.error('[ERROR] Frame extraction failed:', error);
     process.exit(1);

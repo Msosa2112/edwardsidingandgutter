@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import { ChevronDown, ArrowRight, Shield, Award, Sparkles, CheckCircle2 } from 'lucide-react';
+import AnimatedLogoReveal from './AnimatedLogoReveal';
 
 /**
  * ScrollFrameSequence
@@ -7,12 +9,12 @@ import { ChevronDown, ArrowRight, Shield, Award, Sparkles, CheckCircle2 } from '
  * Driven strictly by vertical scroll position -> frame index -> canvas render.
  */
 export default function ScrollFrameSequence({
-  desktopScrollHeight = '500vh',
-  mobileScrollHeight = '450vh',
+  desktopScrollHeight = '280vh',
+  mobileScrollHeight = '250vh',
   totalFrames = 120,
-  holdStart = 0.05,
-  holdEnd = 0.90,
-  smoothing = 0.12,
+  holdStart = 0.04,
+  holdEnd = 0.88,
+  smoothing = 0.22,
   breakpoint = '(min-width: 768px)',
   className = ''
 }) {
@@ -33,14 +35,7 @@ export default function ScrollFrameSequence({
   const [displayProgress, setDisplayProgress] = useState(0);
   const [currentPhase, setCurrentPhase] = useState('identity'); // 'identity' | 'framing' | 'siding' | 'complete'
 
-  // Animation completion stop latch states
-  const [isAtStop, setIsAtStop] = useState(false);
-  const [isUnlocked, setIsUnlocked] = useState(false);
-  const isAtStopRef = useRef(false);
-  const isUnlockedRef = useRef(false);
-  const userLiftedFingerRef = useRef(false);
-  const stopTimestampRef = useRef(0);
-  const touchStartYRef = useRef(0);
+
 
   // Performance refs (deserialized from React render cycle)
   const targetProgressRef = useRef(0);
@@ -52,10 +47,10 @@ export default function ScrollFrameSequence({
   const activeOrientationRef = useRef(isDesktop ? 'desktop' : 'mobile');
   const needsRedrawRef = useRef(true);
 
-  // Helper to format frame path
+  // Helper to format frame path (cache-buster ensures fresh load of clean final frame)
   const getFrameUrl = useCallback((frameIndex, orientation) => {
     const padded = String(frameIndex).padStart(4, '0');
-    return `/frames/${orientation}/frame-${padded}.webp`;
+    return `/frames/${orientation}/frame-${padded}.webp?v=clean2`;
   }, []);
 
   // Frame calculation based on configurable holds
@@ -210,7 +205,7 @@ export default function ScrollFrameSequence({
     return closestFrame;
   }, [totalFrames]);
 
-  // Scroll listener (Calculates scroll progress into targetProgressRef with stop latch)
+  // Scroll listener: purely calculates progress without fighting native browser scroll physics
   const handleScroll = useCallback(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -223,144 +218,11 @@ export default function ScrollFrameSequence({
       return;
     }
 
-    const currentScrollY = window.scrollY;
-    const maxHeroScroll = totalScrollable;
-
-    // Check if user has reached the end of the animation sequence
-    if (!isUnlockedRef.current) {
-      if (currentScrollY >= maxHeroScroll - 2) {
-        if (!isAtStopRef.current) {
-          isAtStopRef.current = true;
-          setIsAtStop(true);
-          stopTimestampRef.current = Date.now();
-          userLiftedFingerRef.current = false;
-        }
-
-        // Clamp right at the end of the animation so it doesn't bleed into <main>
-        if (currentScrollY > maxHeroScroll) {
-          window.scrollTo(0, maxHeroScroll);
-        }
-      } else if (currentScrollY < maxHeroScroll - 60) {
-        if (isAtStopRef.current) {
-          isAtStopRef.current = false;
-          setIsAtStop(false);
-        }
-      }
-    } else {
-      // Re-arm the stop latch if the user scrolls far back up into the animation
-      if (currentScrollY < maxHeroScroll - 140) {
-        isUnlockedRef.current = false;
-        setIsUnlocked(false);
-        isAtStopRef.current = false;
-        setIsAtStop(false);
-      }
-    }
-
-    // Progress: 0 (top of section reaches top) to 1 (bottom reaches viewport bottom)
+    // Progress: 0 (top reaches top) to 1 (bottom reaches viewport bottom)
     const rawProgress = -rect.top / totalScrollable;
     const clampedProgress = Math.max(0, Math.min(1, rawProgress));
 
     targetProgressRef.current = clampedProgress;
-  }, []);
-
-  // Event listener for touch and wheel gesture detection to enforce "scroll again"
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const getMaxHeroScroll = () => {
-      return container.offsetHeight - window.innerHeight;
-    };
-
-    // Mobile touch tracking
-    const onTouchStart = (e) => {
-      if (e.touches && e.touches.length > 0) {
-        touchStartYRef.current = e.touches[0].clientY;
-      }
-    };
-
-    const onTouchEnd = () => {
-      if (isAtStopRef.current && !isUnlockedRef.current) {
-        // User has lifted their finger after reaching the end!
-        userLiftedFingerRef.current = true;
-      }
-    };
-
-    const onTouchMove = (e) => {
-      if (!isAtStopRef.current || isUnlockedRef.current) return;
-      if (!e.touches || e.touches.length === 0) return;
-
-      const currentY = e.touches[0].clientY;
-      const deltaY = touchStartYRef.current - currentY; // positive = swipe up = scroll down
-
-      if (!userLiftedFingerRef.current) {
-        // Still in the scroll gesture that reached the end -> stop momentum!
-        if (deltaY > 0) {
-          e.preventDefault();
-          window.scrollTo(0, getMaxHeroScroll());
-        }
-      } else {
-        // User lifted finger and is now swiping AGAIN -> Unlock and continue!
-        if (deltaY > 10) {
-          isUnlockedRef.current = true;
-          setIsUnlocked(true);
-          isAtStopRef.current = false;
-          setIsAtStop(false);
-        }
-      }
-    };
-
-    // Desktop wheel tracking
-    const onWheel = (e) => {
-      // If user scrolls up, always allow and reset latch
-      if (e.deltaY < 0) {
-        if (isAtStopRef.current) {
-          isAtStopRef.current = false;
-          setIsAtStop(false);
-        }
-        return;
-      }
-
-      if (isAtStopRef.current && !isUnlockedRef.current) {
-        const elapsed = Date.now() - stopTimestampRef.current;
-        if (elapsed < 350) {
-          // Absorb initial wheel momentum burst
-          e.preventDefault();
-          window.scrollTo(0, getMaxHeroScroll());
-        } else {
-          // User paused and wheeled AGAIN -> Unlock and continue!
-          isUnlockedRef.current = true;
-          setIsUnlocked(true);
-          isAtStopRef.current = false;
-          setIsAtStop(false);
-        }
-      }
-    };
-
-    // Anchor click handler so nav links are never trapped
-    const onDocClick = (e) => {
-      const anchor = e.target.closest('a[href^="#"], button');
-      if (anchor) {
-        isUnlockedRef.current = true;
-        setIsUnlocked(true);
-        isAtStopRef.current = false;
-        setIsAtStop(false);
-      }
-    };
-
-    window.addEventListener('touchstart', onTouchStart, { passive: true });
-    window.addEventListener('touchend', onTouchEnd, { passive: true });
-    window.addEventListener('touchmove', onTouchMove, { passive: false });
-    window.addEventListener('wheel', onWheel, { passive: false });
-    document.addEventListener('click', onDocClick);
-
-    return () => {
-      window.removeEventListener('touchstart', onTouchStart);
-      window.removeEventListener('touchend', onTouchEnd);
-      window.removeEventListener('touchmove', onTouchMove);
-      window.removeEventListener('wheel', onWheel);
-      document.removeEventListener('click', onDocClick);
-    };
   }, []);
 
   // Responsive orientation listener
@@ -498,28 +360,14 @@ export default function ScrollFrameSequence({
     };
   }, [smoothing, getFrameIndexFromProgress, getBestAvailableFrame, drawFrameToCanvas, loadNearbyFrames]);
 
-  // Smooth jump past the animation
-  const scrollToRelease = useCallback(() => {
-    if (containerRef.current) {
-      const rect = containerRef.current.getBoundingClientRect();
-      const targetScroll = window.scrollY + rect.height - window.innerHeight + 60;
-      window.scrollTo({ top: targetScroll, behavior: 'smooth' });
-    }
-  }, []);
 
-  const unlockAndRelease = useCallback(() => {
-    isUnlockedRef.current = true;
-    setIsUnlocked(true);
-    isAtStopRef.current = false;
-    setIsAtStop(false);
-    scrollToRelease();
-  }, [scrollToRelease]);
 
   const containerHeight = isDesktop ? desktopScrollHeight : mobileScrollHeight;
 
   return (
     <div 
       ref={containerRef} 
+      id="hero-sequence"
       className={`relative w-full z-20 ${className}`}
       style={{ height: containerHeight }}
     >
@@ -550,115 +398,96 @@ export default function ScrollFrameSequence({
           </div>
         )}
 
+        {/* Center Stage: When sequence finishes (displayProgress >= 85), reveal the official animated logo */}
+        <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center z-30 px-4">
+          <AnimatedLogoReveal 
+            isRevealed={displayProgress >= 85} 
+            className="w-full max-w-sm sm:max-w-xl md:max-w-2xl lg:max-w-3xl"
+          />
+          
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ 
+              opacity: displayProgress >= 85 ? 1 : 0, 
+              y: displayProgress >= 85 ? 0 : 15 
+            }}
+            transition={{ duration: 0.6, delay: 0.35 }}
+            className="mt-3 sm:mt-5 text-center space-y-1.5"
+          >
+            <p className="text-[11px] sm:text-xs md:text-sm font-bold text-white/95 tracking-[0.25em] uppercase drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)]">
+              General Construction &amp; Remodeling
+            </p>
+            <p className="text-[10px] sm:text-[11px] md:text-[12px] text-[#38bdf8] tracking-[0.2em] uppercase font-bold drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
+              Specialized in Siding • Gutters • Soffit • Fascia
+            </p>
+            <p className="text-[9px] sm:text-[10px] text-white/70 tracking-[0.15em] uppercase font-mono drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)]">
+              4+ Years of Proven Field Excellence // Rapidly Growing in Kentuckiana
+            </p>
+          </motion.div>
+        </div>
+
         {/* Minimalist Storytelling & Interactive HUD Overlay */}
         <div className="absolute inset-0 pointer-events-none flex flex-col justify-end px-4 py-4 sm:p-6 md:p-12 z-30 pb-6 sm:pb-8 md:pb-12">
 
-          {/* Lower Dynamic Storytelling Text (Minimalist, No Background Box) */}
+          {/* Lower Dynamic Storytelling Text (Minimalist, only while building) */}
           <div className="w-full max-w-xl mx-auto text-center pointer-events-none px-2 mb-3 sm:mb-4 md:mb-5 transition-all duration-500">
             
             {/* Phase 0: Identity Cue */}
-            {currentPhase === 'identity' && (
+            {currentPhase === 'identity' && displayProgress < 85 && (
               <div className="space-y-1 transition-opacity duration-500">
                 <span className="text-[10px] sm:text-[11px] font-bold text-[#38bdf8] tracking-[0.22em] uppercase drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
-                  Prime Stone Builders
+                  General Construction &amp; Remodeling
                 </span>
                 <p className="text-[11px] sm:text-xs md:text-sm text-white/80 max-w-xs sm:max-w-md mx-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] font-light leading-snug">
-                  Scroll forward to witness the architectural transformation.
+                  4+ years of proven field experience with exponential regional growth.
                 </p>
               </div>
             )}
 
-            {/* Card 1: Siding */}
-            {currentPhase === 'siding' && (
+            {/* Card 1: Siding, Soffit & Fascia */}
+            {currentPhase === 'siding' && displayProgress < 85 && (
               <div className="space-y-1 transition-opacity duration-500">
                 <span className="text-[10px] sm:text-[11px] font-bold text-[#38bdf8] tracking-[0.22em] uppercase drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
-                  Architectural Exterior
+                  Core Specialization
                 </span>
                 <h2 className="text-lg sm:text-2xl md:text-3xl font-black text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] tracking-wide">
-                  Siding
+                  Siding, Soffit &amp; Fascia
                 </h2>
                 <p className="text-[11px] sm:text-xs md:text-sm text-white/85 max-w-xs sm:max-w-md mx-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] font-light leading-relaxed">
-                  Engineered James Hardie, fiber cement, and vertical Board &amp; Batten siding.
+                  James Hardie lap siding, vertical Board &amp; Batten, ventilated soffits, and custom-bent aluminum fascia trim.
                 </p>
               </div>
             )}
 
             {/* Card 2: Gutters */}
-            {currentPhase === 'gutters' && (
+            {currentPhase === 'gutters' && displayProgress < 85 && (
               <div className="space-y-1 transition-opacity duration-500">
                 <span className="text-[10px] sm:text-[11px] font-bold text-[#38bdf8] tracking-[0.22em] uppercase drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
                   Seamless Drainage
                 </span>
                 <h2 className="text-lg sm:text-2xl md:text-3xl font-black text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] tracking-wide">
-                  Gutters
+                  Seamless Gutters
                 </h2>
                 <p className="text-[11px] sm:text-xs md:text-sm text-white/85 max-w-xs sm:max-w-md mx-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] font-light leading-relaxed">
-                  Custom 5" &amp; 6" seamless aluminum gutters extruded on-site with leaf protection.
+                  Heavy-gauge .032" aluminum extruded on-site directly from our mobile van with zero leak-prone seams.
                 </p>
               </div>
             )}
 
-            {/* Card 3: Roofing */}
-            {currentPhase === 'roofing' && (
+            {/* Card 3: Construction & Remodeling */}
+            {currentPhase === 'roofing' && displayProgress < 85 && (
               <div className="space-y-1 transition-opacity duration-500">
                 <span className="text-[10px] sm:text-[11px] font-bold text-[#38bdf8] tracking-[0.22em] uppercase drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
-                  Storm Protection
+                  Turnkey Remodeling
                 </span>
                 <h2 className="text-lg sm:text-2xl md:text-3xl font-black text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] tracking-wide">
-                  Roofing
+                  Structural Remodeling &amp; Roofing
                 </h2>
                 <p className="text-[11px] sm:text-xs md:text-sm text-white/85 max-w-xs sm:max-w-md mx-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] font-light leading-relaxed">
-                  Heavy-duty 50-year architectural shingles and standing seam metal roof accents.
+                  Porches, structural framing, timber additions, masonry accents, and 50-year high-wind roofing systems.
                 </p>
               </div>
             )}
-
-            {/* Phase 4: General Construction & Remodeling */}
-            {currentPhase === 'remodeling' && (
-              <div className="space-y-1 transition-opacity duration-500">
-                <span className="text-[9px] sm:text-[10px] font-bold text-amber-400 tracking-[0.22em] uppercase drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)]">
-                  Turnkey Contracting
-                </span>
-                <h2 className="text-sm sm:text-base md:text-lg font-bold text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
-                  General Construction &amp; Remodeling
-                </h2>
-                <p className="text-[11px] sm:text-xs text-white/80 max-w-xs sm:max-w-md mx-auto drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)] font-light leading-snug">
-                  From custom stone masonry and decks to full residential and commercial exterior renovations.
-                </p>
-              </div>
-            )}
-
-          </div>
-
-          {/* Bottom Interactive Scroll Indicator & Progress Bar */}
-          <div className="flex flex-col items-center justify-center w-full max-w-xs mx-auto space-y-1.5">
-            
-            {/* Scroll Direction Cue */}
-            {isAtStop && !isUnlocked ? (
-              <button 
-                type="button"
-                onClick={unlockAndRelease}
-                className="pointer-events-auto flex items-center gap-1.5 text-[#38bdf8] hover:text-white transition-colors drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] text-[10px] sm:text-[11px] font-bold uppercase tracking-widest cursor-pointer py-0.5 animate-pulse"
-              >
-                <span>Scroll again to explore</span>
-                <ChevronDown className="w-3.5 h-3.5 animate-bounce" />
-              </button>
-            ) : (
-              <div className="flex items-center gap-1.5 text-white/80 drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)] text-[10px] sm:text-[11px]">
-                <ChevronDown className="w-3 h-3 text-[#38bdf8] animate-bounce" />
-                <span className="font-semibold uppercase tracking-wider">
-                  Scroll to build • {displayProgress}%
-                </span>
-              </div>
-            )}
-
-            {/* Micro Progress Bar */}
-            <div className="w-28 sm:w-36 h-1 bg-white/20 rounded-full overflow-hidden backdrop-blur-sm shadow-lg">
-              <div 
-                className="h-full bg-[#38bdf8] transition-all duration-100 ease-out"
-                style={{ width: `${displayProgress}%` }}
-              ></div>
-            </div>
 
           </div>
 

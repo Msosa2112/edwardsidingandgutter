@@ -1,0 +1,69 @@
+import React from "react";
+import { ScrollSplitCard } from "./ui/scroll-split-card";
+import { Layers, Droplets, Shield } from "lucide-react";
+
+export default function HouseSplitShowcase({ onSelectDiscipline }) {
+  const handleCardClick = (disciplineName) => {
+    if (onSelectDiscipline) {
+      onSelectDiscipline(disciplineName);
+    }
+    const configEl = document.getElementById("configurator");
+    if (configEl) {
+      configEl.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const cards = [
+    {
+      title: "Siding, Soffit & Fascia",
+      frontTitle: "Exterior Envelope Mastery",
+      frontLabel: "SPECIALIZATION 01 // SIDING, SOFFIT & FASCIA",
+      description: "Engineered James Hardie fiber-cement, vertical board & batten, ventilated aluminum soffits, and custom brake-bent fascia trims with dual moisture barriers.",
+      bgColor: "#0c1527", // deep midnight navy
+      textColor: "#ffffff",
+      image: "/projects/craft-siding-real.jpg",
+      icon: <Layers className="w-6 h-6 text-[#38bdf8]" />,
+      specs: ["James Hardie Certified", "Ventilated Soffits", "Custom Fascia Wraps"],
+      actionText: "Configure Siding & Trim Scope",
+      onClick: () => handleCardClick("Siding, Soffit & Fascia")
+    },
+    {
+      title: "Seamless Gutters",
+      frontTitle: "On-Site Extruded Drainage",
+      frontLabel: "SPECIALIZATION 02 // SEAMLESS GUTTERS",
+      description: "Heavy-gauge .032\" aluminum rollformed on-site directly from our mobile extrusion unit. Precision hand-mitered corners eliminate leak-prone seams entirely.",
+      bgColor: "#0284c7", // rich brand sky blue
+      textColor: "#ffffff",
+      image: "/projects/craft-gutter-real.jpg",
+      icon: <Droplets className="w-6 h-6 text-white" />,
+      specs: ["Extruded On-Site", ".032\" Heavy Aluminum", "Micro-Mesh Leaf Filtration"],
+      actionText: "Configure Gutter Scope",
+      onClick: () => handleCardClick("Seamless Gutters")
+    },
+    {
+      title: "General Construction & Remodeling",
+      frontTitle: "Turnkey Remodeling & Roofing",
+      frontLabel: "SPECIALIZATION 03 // REMODELING & CONSTRUCTION",
+      description: "Complete residential remodeling, structural porch additions, timber porticos, masonry facades, and 50-year high-wind architectural roofing systems.",
+      bgColor: "#172033", // architectural graphite slate
+      textColor: "#ffffff",
+      image: "/projects/craft-roof-real.jpg",
+      icon: <Shield className="w-6 h-6 text-amber-400" />,
+      specs: ["Turnkey Remodeling", "Structural Timber & Masonry", "50-Yr Roof Shield"],
+      actionText: "Configure Remodeling Scope",
+      onClick: () => handleCardClick("General Construction & Remodeling")
+    }
+  ];
+
+  return (
+    <section id="house-breakdown" className="relative w-full bg-[#080b11]">
+      <ScrollSplitCard
+        imageSrc="/showcase-house-custom.jpg"
+        mobileImageSrc="/showcase-house-mobile.jpg"
+        cards={cards}
+        headerText="GENERAL CONSTRUCTION &amp; REMODELING // 4+ YEARS OF FIELD EXCELLENCE"
+        footerText="A Young, High-Growth Powerhouse. 4+ Years of Battle-Tested Craftsmanship."
+      />
+    </section>
+  );
+}
