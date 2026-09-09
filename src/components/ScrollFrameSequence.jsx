@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronDown, ArrowRight, Shield, Award, Sparkles, CheckCircle2 } from 'lucide-react';
 import AnimatedLogoReveal from './AnimatedLogoReveal';
+import { DotPattern } from './ui/dot-pattern';
 
 /**
  * ScrollFrameSequence
@@ -376,10 +377,20 @@ export default function ScrollFrameSequence({
         ref={stickyRef}
         className="sticky top-0 h-screen w-full overflow-hidden bg-[#0a0f1d] flex items-center justify-center select-none z-20"
       >
+        {/* Full-bleed Architectural Dot Pattern */}
+        <DotPattern
+          width={24}
+          height={24}
+          cx={1}
+          cy={1}
+          cr={0.8}
+          className="absolute inset-0 h-full w-full fill-slate-500/35 md:fill-slate-500/45 pointer-events-none z-0"
+        />
+
         {/* Canvas Engine */}
         <canvas 
           ref={canvasRef}
-          className="w-full h-full block pointer-events-none"
+          className="relative z-10 w-full h-full block pointer-events-none"
           style={{ width: '100%', height: '100%' }}
         />
 

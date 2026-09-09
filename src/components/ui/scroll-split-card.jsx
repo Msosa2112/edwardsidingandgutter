@@ -90,7 +90,7 @@ export function ScrollSplitCard({
   return (
     <div
       ref={localTargetRef}
-      className={cn("relative h-[250vh] sm:h-[280vh] w-full bg-[#080b11]", className)}
+      className={cn("relative h-[250vh] sm:h-[280vh] w-full bg-transparent", className)}
     >
       <div 
         className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden px-3 sm:px-4"

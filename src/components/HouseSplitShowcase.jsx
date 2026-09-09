@@ -56,7 +56,7 @@ export default function HouseSplitShowcase({ onSelectDiscipline }) {
   ];
 
   return (
-    <section id="house-breakdown" className="relative w-full bg-[#080b11]">
+    <section id="house-breakdown" className="relative w-full bg-transparent">
       <ScrollSplitCard
         imageSrc="/showcase-house-custom.jpg"
         mobileImageSrc="/showcase-house-mobile.jpg"

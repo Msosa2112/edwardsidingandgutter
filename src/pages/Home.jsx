@@ -19,6 +19,7 @@ import HouseSplitShowcase from '../components/HouseSplitShowcase';
 import HeroParallaxGallery from '../components/HeroParallaxGallery';
 import { CinematicFooter } from '../components/ui/motion-footer';
 import SmoothScrollCoordinator from '../components/SmoothScrollCoordinator';
+import { DotPattern } from '../components/ui/dot-pattern';
 
 export default function Home() {
   const [selectedProject, setSelectedProject] = useState(null);
@@ -86,8 +87,18 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#080b11] text-white font-sans selection:bg-[#38bdf8] selection:text-slate-950">
+    <div className="min-h-screen w-full bg-[#080b11] text-white font-sans selection:bg-[#38bdf8] selection:text-slate-950 relative">
       
+      {/* Global Architectural Dot Pattern Background covering the entire viewport */}
+      <DotPattern
+        width={24}
+        height={24}
+        cx={1}
+        cy={1}
+        cr={0.75}
+        className="fixed inset-0 h-full w-full fill-slate-500/35 md:fill-slate-500/45 pointer-events-none z-0"
+      />
+
       {/* Lenis Smooth Scroll & Anti-Skip Kinetic Guard */}
       <SmoothScrollCoordinator />
       
@@ -162,6 +173,16 @@ export default function Home() {
           ======================================================================== */}
       <main className="relative z-30 bg-[#080b11]">
 
+        {/* Continuous Full-Page Architectural Dot Pattern across entire main body */}
+        <DotPattern
+          width={24}
+          height={24}
+          cx={1}
+          cy={1}
+          cr={0.75}
+          className="absolute inset-0 h-full w-full fill-slate-500/35 md:fill-slate-500/45 pointer-events-none z-0"
+        />
+
         {/* ----------------------------------------------------------------------
             0. INTERACTIVE HOUSE DECOMPOSITION (Siding, Gutters, Roof)
             Scroll-driven 3-way split showcase with 8K macro lens inspection.
@@ -180,7 +201,7 @@ export default function Home() {
             COMPANY PROFILE: 4+ YEARS EXPERIENCE // RAPID REGIONAL GROWTH
             High-growth General Construction & Remodeling Powerhouse
             ---------------------------------------------------------------------- */}
-        <section id="about-growth" className="w-full max-w-7xl mx-auto px-4 sm:px-8 md:px-12 py-20 sm:py-28 border-t border-white/10">
+        <section id="about-growth" className="relative w-full max-w-7xl mx-auto px-4 sm:px-8 md:px-12 py-20 sm:py-28 border-t border-white/10 z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
             
             {/* Left: Narrative */}
@@ -260,7 +281,7 @@ export default function Home() {
             4. ARCHITECTURAL SCOPE INQUIRY & DIRECT SUPERINTENDENT CONTACT
             Open, 2-column layout directly on canvas. No nested box within a box.
             ---------------------------------------------------------------------- */}
-        <section id="configurator" className="w-full max-w-7xl mx-auto px-4 sm:px-8 md:px-12 py-24 md:py-32 border-t border-white/10">
+        <section id="configurator" className="relative w-full max-w-7xl mx-auto px-4 sm:px-8 md:px-12 py-24 md:py-32 border-t border-white/10 z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
             
             {/* Left Column: Direct Leadership Access */}

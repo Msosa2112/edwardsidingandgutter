@@ -7,6 +7,7 @@ import {
   useSpring,
 } from "framer-motion";
 import { MapPin, Maximize2 } from "lucide-react";
+import { DotPattern } from "./dot-pattern";
 
 export const HeroParallax = ({
   products,
@@ -76,7 +77,7 @@ export const HeroParallax = ({
   return (
     <div
       ref={ref}
-      className="h-[130vh] sm:h-[170vh] md:h-[230vh] lg:h-[280vh] py-8 sm:py-16 md:py-24 overflow-hidden antialiased relative flex flex-col self-auto md:[perspective:1000px] md:[transform-style:preserve-3d] bg-[#080b11] select-none"
+      className="h-[130vh] sm:h-[170vh] md:h-[230vh] lg:h-[280vh] py-8 sm:py-16 md:py-24 overflow-hidden antialiased relative flex flex-col self-auto md:[perspective:1000px] md:[transform-style:preserve-3d] bg-transparent select-none"
     >
       <Header />
       <motion.div
