@@ -32,7 +32,9 @@ logo cuadrado.png
 public/fleet/
 *.pdf
 !public/*.pdf
-*.bak
-contrato_preview_*.png
+# Video captures and recordings
+*.mp4
+public/preview_*.jpg
+contrato_*.png
 edward_siding_logo_contract.png
 

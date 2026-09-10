@@ -4,139 +4,139 @@ import { HeroParallax } from "./ui/hero-parallax";
 
 const products = [
   {
-    title: "Prospect Executive Residence",
+    title: "Executive Residence Siding & Fascia",
     discipline: "Siding, Soffit & Fascia",
     location: "Prospect, KY",
     link: "#configurator",
-    thumbnail: "/projects/hardie-blue-residence.jpg",
-    specs: ["James Hardie Lap Siding", "Custom Aluminum Fascia", "Dual Weather Barrier"],
-    description: "Complete residential facade overhaul in deep ocean blue fiber-cement with custom brake-bent fascia wraps and vented soffits."
+    thumbnail: "/projects/siding-hardie-board-batten.jpg",
+    specs: ["James Hardie Lap Siding", "Custom Cedar Porch Ceiling", "Brake-Bent Aluminum Fascia"],
+    description: "Complete exterior transformation featuring horizontal lap siding, custom tongue-and-groove cedar ceiling, and continuous moisture barrier."
   },
   {
-    title: "Warm Cedar Board & Batten",
-    discipline: "Exterior Siding Accent",
+    title: "Grand Estate Multi-Gable Gutters",
+    discipline: "Seamless Gutters",
     location: "Floyds Knobs, IN",
     link: "#configurator",
-    thumbnail: "/projects/board-batten-cedar-gable.jpg",
-    specs: ["Vertical Board & Batten", "Natural Cedar Finish", "Engineered Reveal"],
-    description: "Architectural gable accent featuring vertical siding paired with white limewash brick masonry."
+    thumbnail: "/projects/gutter-seamless-fascia-run.jpg",
+    specs: [".032\" Heavy Aluminum", "Multi-Gable Continuous Run", "Heavy Screw Hangers"],
+    description: "Continuous heavy-gauge .032\" seamless gutter installation rollformed on-site to handle high-pitch roof drainage."
   },
   {
-    title: "Continuous Seamless Gutters",
-    discipline: "Seamless Drainage",
-    location: "Jeffersonville, IN",
-    link: "#configurator",
-    thumbnail: "/projects/seamless-drainage-soffit.jpg",
-    specs: [".032\" Heavy Aluminum", "Extruded On-Site", "Hidden Screw Hangers"],
-    description: "Custom-extruded continuous gutter system rollformed on-site directly from our mobile van."
-  },
-  {
-    title: "Craftsman Portico & Stone Bases",
+    title: "Farmhouse Portico & Stone Bases",
     discipline: "General Construction",
     location: "Louisville Metro, KY",
     link: "#configurator",
-    thumbnail: "/projects/stone-portico-framing.jpg",
-    specs: ["Hand-Chiseled Stone Veneer", "Timber Post Framing", "Shingle Tie-In"],
-    description: "Grand entryway transformation incorporating heavy-timber framed columns anchored onto handcrafted stone veneer pedestals."
+    thumbnail: "/projects/gc-portico-stone-columns.jpg",
+    specs: ["Handcrafted Stone Columns", "Architectural Timber Posts", "Fiber-Cement Siding Tie-In"],
+    description: "Grand entry portico featuring timber framing anchored onto stone masonry pillars with integrated siding details."
   },
   {
-    title: "50-Year Architectural Shingles",
-    discipline: "Roofing Systems",
+    title: "Continuous Extruded Drainage Run",
+    discipline: "Seamless Gutters",
+    location: "Jeffersonville, IN",
+    link: "#configurator",
+    thumbnail: "/projects/gutter-miter-corner-craft.jpg",
+    specs: ["Precision Hand-Cut Miters", "Zero-Leak Polyurethane Seal", "Extruded On-Site"],
+    description: "Hand-crafted corner miters eliminating failure-prone box miters for permanent leak-free Ohio Valley performance."
+  },
+  {
+    title: "Carriage House Drainage & Siding",
+    discipline: "Gutters, Soffit & Fascia",
     location: "Anchorage, KY",
     link: "#configurator",
-    thumbnail: "/projects/architectural-shingle-roof.jpg",
-    specs: ["50-Year High-Wind Shingles", "Full Ice & Water Shield", "Ridge Thermal Vents"],
-    description: "Engineered roof replacement designed for severe Ohio Valley weather and continuous synthetic underlayment."
+    thumbnail: "/projects/gutter-heavy-aluminum-install.jpg",
+    specs: ["Seamless Heavy Aluminum", "Board & Batten Tie-In", "Commercial Downspouts"],
+    description: "Architectural carriage house installation coordinating continuous aluminum gutters with custom exterior trim."
   },
   {
-    title: "Covered Porch & Brick Addition",
-    discipline: "Turnkey Remodeling",
-    location: "Louisville East, KY",
-    link: "#configurator",
-    thumbnail: "/projects/covered-patio-masonry.jpg",
-    specs: ["Structural Timber Beams", "Continuous Brick Facade", "Integrated Roofline"],
-    description: "Full residential rear addition featuring structural covered porch framing and continuous brick masonry."
-  },
-  {
-    title: "Ventilated Soffit & Custom Fascia",
-    discipline: "Soffit & Fascia Systems",
-    location: "St. Matthews, KY",
-    link: "#configurator",
-    thumbnail: "/projects/porch-siding-patio.jpg",
-    specs: ["Ventilated Aluminum Soffits", "Hand-Formed Fascia Metal", "Moisture Seal"],
-    description: "Complete patio enclosure and exterior siding upgrade with precision mitered corners, ventilated soffits, and custom fascia wraps."
-  },
-  {
-    title: "Structural Timber Rough-In",
+    title: "Craftsman Timber Porch Framing",
     discipline: "General Construction",
     location: "East Louisville, KY",
     link: "#configurator",
-    thumbnail: "/projects/craft-siding-real.jpg",
-    specs: ["Engineered Timber", "Concealed Fasteners", "Load-Bearing Bases"],
-    description: "Precision-milled structural timber framing, weather-barrier rough-in, and full envelope construction."
+    thumbnail: "/projects/gc-timber-porch-framing.jpg",
+    specs: ["Heavy Timber Beams", "Open-Rafter Architecture", "Custom Masonry Pedestals"],
+    description: "Structural timber porch addition with engineered beam spans, exposed rafter craftsmanship, and brick foundation tie."
   },
   {
-    title: "Zero-Leak Hand-Formed Miters",
-    discipline: "Seamless Gutters",
-    location: "Clarksville, IN",
-    link: "#configurator",
-    thumbnail: "/projects/craft-gutter-detail.jpg",
-    specs: ["Hand-Cut Miters", "Polyurethane Sealant", "Direct Fascia Tie"],
-    description: "Hand-crafted corner miters eliminate failure-prone factory box miters, ensuring permanent leak protection."
-  },
-  {
-    title: "On-Site Mobile Van Extrusion",
-    discipline: "Mobile Gutter Fabrication",
-    location: "Louisville Metro, KY",
-    link: "#configurator",
-    thumbnail: "/projects/craft-gutter-real.jpg",
-    specs: ["Mobile Van Extrusion", "Custom Pitch Drop", "High-Flow Downspouts"],
-    description: "Continuous gutters rollformed on-site directly from our mobile fabrication unit for exact building dimensions."
-  },
-  {
-    title: "Continuous Ice & Water Decking",
-    discipline: "Thermal Roofline Decking",
-    location: "Glenview, KY",
-    link: "#configurator",
-    thumbnail: "/projects/craft-roof-detail.jpg",
-    specs: ["Full Eave Shield", "Synthetic Underlayment", "Drip Edge Flashing"],
-    description: "Dual-layer self-adhering ice and water membrane across eaves, valleys, and vulnerable rooflines."
-  },
-  {
-    title: "Ridge Ventilation & Drone Survey",
-    discipline: "Engineered Roofing",
-    location: "Anchorage, KY",
-    link: "#configurator",
-    thumbnail: "/projects/craft-roof-real.jpg",
-    specs: ["Ridge Vent Thermal", "6-Nail Fastener Pattern", "Drone Orthomosaic"],
-    description: "Low-profile continuous ridge vent system inspected via high-resolution aerial drone documentation."
-  },
-  {
-    title: "Hand-Formed Aluminum Fascia Wrap",
-    discipline: "Soffit & Fascia Systems",
-    location: "Prospect, KY",
-    link: "#configurator",
-    thumbnail: "/projects/craft-siding-detail.jpg",
-    specs: ["Heavy Aluminum Coil", "Custom Brake Bending", "Zero-Maintenance Trim"],
-    description: "Custom brake-bent aluminum fascia wrap and window casing profiles preventing moisture rot."
-  },
-  {
-    title: "Full Residential Remodeling",
-    discipline: "Turnkey Remodeling",
+    title: "Multi-Story Blue Architectural Lap Siding",
+    discipline: "Siding Systems",
     location: "Prospect East, KY",
     link: "#configurator",
-    thumbnail: "/projects/hardie-blue-residence.jpg",
-    specs: ["Full Exterior Overhaul", "James Hardie Siding", "Soffit & Fascia Package"],
-    description: "Comprehensive whole-home exterior modernization combining siding, gutters, soffits, and custom fascia."
+    thumbnail: "/projects/siding-architectural-lap-blue.jpg",
+    specs: ["James Hardie Ocean Blue", "Engineered Reveal Trim", "Dual Weather Barrier"],
+    description: "Multi-story full residential envelope replacement in deep ocean blue fiber-cement with crisp architectural casing."
   },
   {
-    title: "Heavy-Gauge Soffit & Drainage Run",
-    discipline: "Gutters, Soffit & Fascia",
+    title: "Residential Multi-Unit Addition",
+    discipline: "General Construction",
     location: "Clarksville, IN",
     link: "#configurator",
-    thumbnail: "/projects/seamless-drainage-soffit.jpg",
-    specs: [".032\" Heavy Aluminum", "Vented Aluminum Soffits", "Heavy Screw Hangers"],
-    description: "Unified continuous gutter installation tied seamlessly with ventilated soffit panels and fascia caps."
+    thumbnail: "/projects/gc-residential-full-addition.jpg",
+    specs: ["Turnkey Framing & Envelope", "Multi-Unit Construction", "Complete Exterior Package"],
+    description: "Ground-up residential expansion including structural rough-in, weather barrier envelope, siding, and roofing tie-in."
+  },
+  {
+    title: "Structural Covered Deck & Porch",
+    discipline: "Remodeling & Additions",
+    location: "St. Matthews, KY",
+    link: "#configurator",
+    thumbnail: "/projects/gc-exterior-deck-addition.jpg",
+    specs: ["Pressure-Treated Framing", "Architectural Roof Tie", "Integrated Drainage"],
+    description: "Custom covered outdoor living space featuring structural timber roof tie-in, vented soffit, and continuous gutters."
+  },
+  {
+    title: "Full Exterior Envelope & Soffit",
+    discipline: "Siding, Soffit & Fascia",
+    location: "Goshen, KY",
+    link: "#configurator",
+    thumbnail: "/projects/siding-soffit-fascia-envelope.jpg",
+    specs: ["Ventilated Soffit System", "Hand-Brake Fascia Wrap", "Stone & Siding Transition"],
+    description: "Complete residential exterior remodel combining masonry column wraps, fiber-cement siding, and zero-maintenance trim."
+  },
+  {
+    title: "Custom Kitchen Cabinetry & Remodel",
+    discipline: "Turnkey Remodeling",
+    location: "Louisville Metro, KY",
+    link: "#configurator",
+    thumbnail: "/projects/remodel-living-open-concept.jpg",
+    specs: ["Solid Oak Shaker Cabinets", "Quartz Waterfall Island", "Under-Cabinet LED Lighting"],
+    description: "Full interior kitchen modernization with open-concept layout, custom oak cabinetry, and designer architectural hardware."
+  },
+  {
+    title: "Master Bathroom Suite Renovation",
+    discipline: "Turnkey Remodeling",
+    location: "Highlands, Louisville, KY",
+    link: "#configurator",
+    thumbnail: "/projects/remodel-luxury-kitchen-island.jpg",
+    specs: ["Freestanding Soaking Tub", "Frameless Glass Enclosure", "Matte Black Fixtures"],
+    description: "Luxury master bathroom overhaul with porcelain tile, dual vanity installation, and high-efficiency plumbing."
+  },
+  {
+    title: "Modern Two-Tone Timber Entry",
+    discipline: "General Construction",
+    location: "Glenview, KY",
+    link: "#configurator",
+    thumbnail: "/projects/gc-custom-timber-entry.jpg",
+    specs: ["Architectural Timber Portico", "Two-Tone Exterior Siding", "Concealed Fasteners"],
+    description: "Modern architectural facade remodel featuring exposed timber entry canopy paired with horizontal lap siding."
+  },
+  {
+    title: "Gable Downspout & Drainage Integration",
+    discipline: "Seamless Gutters",
+    location: "New Albany, IN",
+    link: "#configurator",
+    thumbnail: "/projects/gutter-downspout-soffit-tie.jpg",
+    specs: ["High-Flow Downspouts", "Soffit Return Tie-In", "Leak-Proof Sealant"],
+    description: "Custom-routed downspouts and bay window roofline drainage preventing foundation water saturation."
+  },
+  {
+    title: "Commercial Structural Framing & Roof",
+    discipline: "General Construction",
+    location: "Louisville East, KY",
+    link: "#configurator",
+    thumbnail: "/projects/gc-structural-roof-elevation.jpg",
+    specs: ["Engineered Roof Trusses", "Commercial Envelope", "Comprehensive Weather Proofing"],
+    description: "Heavy commercial and residential structural framing elevation with precision engineered load-bearing headers."
   }
 ];
 

@@ -18,27 +18,27 @@ import { FaGoogle, FaFacebookF } from 'react-icons/fa';
 const PROJECTS = [
   {
     id: "hardie-blue",
-    title: "Prospect Executive Facade",
+    title: "Executive Residence Siding & Fascia",
     category: "siding",
     discipline: "Architectural Siding",
     icon: <Layers className="w-3.5 h-3.5 text-[#38bdf8]" />,
     location: "Prospect, KY",
     year: "2025 Build",
-    image: "/projects/hardie-blue-residence.jpg",
-    specs: ["James Hardie 8.25\" Lap", "Dual Weather Barrier", "Custom Aluminum Wraps"],
-    description: "Complete residential exterior transformation in deep ocean blue fiber-cement lap siding with custom-formed aluminum window and fascia cladding.",
+    image: "/projects/siding-hardie-board-batten.jpg",
+    specs: ["James Hardie 8.25\" Lap", "Dual Weather Barrier", "Custom Cedar Porch Ceiling"],
+    description: "Complete residential exterior transformation in deep fiber-cement lap siding with custom-formed aluminum window and fascia cladding.",
     featured: true
   },
   {
     id: "cedar-gable",
-    title: "Warm Cedar Board & Batten Accent",
+    title: "Multi-Story Blue Architectural Lap",
     category: "siding",
     discipline: "Vertical Siding & Gable",
     icon: <Layers className="w-3.5 h-3.5 text-[#38bdf8]" />,
     location: "Floyds Knobs, IN",
     year: "2025 Build",
-    image: "/projects/board-batten-cedar-gable.jpg",
-    specs: ["Vertical Board & Batten", "Natural Cedar Finish", "Engineered Reveal Joint"],
+    image: "/projects/siding-architectural-lap-blue.jpg",
+    specs: ["Vertical Board & Batten", "Ocean Blue Lap Siding", "Engineered Reveal Joint"],
     description: "Architectural gable accent featuring vertical board & batten siding paired with white limewashed brick masonry for striking curb contrast."
   },
   {
@@ -49,7 +49,7 @@ const PROJECTS = [
     icon: <Droplets className="w-3.5 h-3.5 text-[#38bdf8]" />,
     location: "Jeffersonville, IN",
     year: "2025 Mobile Extrusion",
-    image: "/projects/seamless-drainage-soffit.jpg",
+    image: "/projects/gutter-seamless-fascia-run.jpg",
     specs: [".032\" Heavy Aluminum", "Extruded On-Site", "Hidden Screw Hangers"],
     description: "Custom-extruded seamless gutter run rollformed on-site directly from our mobile fabrication van, eliminating leak-prone seams."
   },
@@ -61,79 +61,79 @@ const PROJECTS = [
     icon: <Droplets className="w-3.5 h-3.5 text-[#38bdf8]" />,
     location: "Clarksville, IN",
     year: "2025 Mobile Extrusion",
-    image: "/projects/craft-gutter-detail.jpg",
+    image: "/projects/gutter-miter-corner-craft.jpg",
     specs: ["Hand-Cut Miters", "Polyurethane Sealant", "Direct Fascia Tie"],
     description: "Precision hand-cut and riveted corner miters that eliminate standard prefabricated box joints and prevent sagging and corner leaks."
   },
   {
     id: "mobile-van-extrusion",
-    title: "On-Site Fabrication & Van Extrusion",
+    title: "Carriage House Drainage & Siding",
     category: "gutters",
     discipline: "Mobile Manufacturing",
     icon: <Droplets className="w-3.5 h-3.5 text-[#38bdf8]" />,
     location: "Louisville Metro, KY",
     year: "2025 Fabrication",
-    image: "/projects/craft-gutter-real.jpg",
+    image: "/projects/gutter-heavy-aluminum-install.jpg",
     specs: ["Mobile Van Extrusion", "Custom Pitch Calibration", "High-Flow Downspouts"],
     description: "Continuous 5-inch and 6-inch K-style aluminum gutters fabricated on-site to exact millimeter measurements for zero waste."
   },
   {
     id: "shingle-roof-anchorage",
-    title: "50-Year Architectural Shingle Roof",
+    title: "Commercial Roof & Structural Elevation",
     category: "roofing",
     discipline: "Roofing Systems",
     icon: <Shield className="w-3.5 h-3.5 text-amber-400" />,
     location: "Anchorage, KY",
     year: "2025 Storm Shield",
-    image: "/projects/architectural-shingle-roof.jpg",
+    image: "/projects/gc-structural-roof-elevation.jpg",
     specs: ["50-Year High-Wind Shingles", "Full Synthetic Decking", "Ridge Thermal Vents"],
     description: "Engineered roof replacement designed for severe Ohio Valley weather spikes, continuous synthetic underlayment, and attic thermal airflow."
   },
   {
     id: "roof-decking-barrier",
-    title: "Continuous Ice & Water Thermal Decking",
+    title: "Gable Bay Drainage Tie-In",
     category: "roofing",
     discipline: "Thermal Deck Protection",
     icon: <Shield className="w-3.5 h-3.5 text-amber-400" />,
     location: "Glenview, KY",
     year: "2025 Storm Shield",
-    image: "/projects/craft-roof-detail.jpg",
+    image: "/projects/gutter-downspout-soffit-tie.jpg",
     specs: ["Full Eave Shield", "Synthetic Underlayment", "Drip Edge Flashing"],
     description: "Dual-layer self-adhering ice and water membrane across eaves and roof valleys before nailing high-impact architectural shingles."
   },
   {
     id: "stone-portico-framing",
-    title: "Craftsman Portico & Stone Veneer",
+    title: "Farmhouse Portico & Stone Bases",
     category: "masonry",
     discipline: "Masonry & Timber",
     icon: <Hammer className="w-3.5 h-3.5 text-amber-400" />,
     location: "Louisville Metro, KY",
     year: "2025 Field Build",
-    image: "/projects/stone-portico-framing.jpg",
+    image: "/projects/gc-portico-stone-columns.jpg",
     specs: ["Hand-Chiseled Stone Veneer", "Heavy Timber Framing", "Integrated Shingle Tie"],
     description: "Grand front entryway transformation incorporating heavy structural timber columns resting on hand-cut natural stone veneer pedestals."
   },
   {
     id: "covered-porch-brick",
-    title: "Covered Porch & Brick Masonry",
+    title: "Craftsman Timber Porch Framing",
     category: "masonry",
     discipline: "Turnkey Addition",
     icon: <Hammer className="w-3.5 h-3.5 text-amber-400" />,
     location: "Louisville East, KY",
     year: "2025 Field Build",
-    image: "/projects/covered-patio-masonry.jpg",
+    image: "/projects/gc-timber-porch-framing.jpg",
     specs: ["Continuous Brick Facade", "Structural Timber Beams", "Tongue & Groove Ceiling"],
     description: "Full residential rear addition featuring structural covered porch framing, continuous brick masonry, and unified shingle roof extension."
   },
   {
     id: "porch-siding-patio",
-    title: "Artisan Porch & Exterior Siding",
+    title: "Full Exterior Envelope & Soffit",
     category: "siding",
     discipline: "Custom Millwork & Siding",
     icon: <Layers className="w-3.5 h-3.5 text-[#38bdf8]" />,
     location: "St. Matthews, KY",
     year: "2025 Field Build",
-    image: "/projects/porch-siding-patio.jpg",
+    image: "/projects/siding-soffit-fascia-envelope.jpg",
     specs: ["Custom Millwork Trim", "Fiber-Cement Lap", "Ventilated Soffit Transitions"],
     description: "Complete patio enclosure and exterior siding upgrade with precision mitered corners, ventilated soffits, and moisture-sealed trims."
   }
@@ -280,7 +280,7 @@ export default function FieldPortfolioGallery({ onSelectProject }) {
             >
               {/* After Image (Right / Base) */}
               <img
-                src="/projects/hardie-blue-residence.jpg"
+                src="/projects/siding-architectural-lap-blue.jpg"
                 alt="Prospect Residence Finished James Hardie Lap"
                 className="absolute inset-0 w-full h-full object-cover"
                 draggable={false}
@@ -295,7 +295,7 @@ export default function FieldPortfolioGallery({ onSelectProject }) {
                 style={{ width: `${sliderPos}%` }}
               >
                 <img
-                  src="/projects/craft-siding-real.jpg"
+                  src="/projects/gc-timber-porch-framing.jpg"
                   alt="Prospect Residence Structural Rough-In"
                   className="absolute inset-y-0 left-0 w-full h-full object-cover max-w-none"
                   style={{

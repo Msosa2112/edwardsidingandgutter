@@ -107,6 +107,9 @@ export default function SmoothScrollCoordinator() {
     });
 
     lenisRef.current = lenis;
+    if (typeof window !== 'undefined') {
+      window.__lenis = lenis;
+    }
 
     // Connect Lenis scroll events to GSAP ScrollTrigger
     lenis.on('scroll', ScrollTrigger.update);

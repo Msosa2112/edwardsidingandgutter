@@ -21,7 +21,7 @@ export default function HouseSplitShowcase({ onSelectDiscipline }) {
       description: "Engineered James Hardie fiber-cement, vertical board & batten, ventilated aluminum soffits, and custom brake-bent fascia trims with dual moisture barriers.",
       bgColor: "#0c1527", // deep midnight navy
       textColor: "#ffffff",
-      image: "/projects/craft-siding-real.jpg",
+      image: "/projects/siding-hardie-board-batten.jpg",
       icon: <Layers className="w-6 h-6 text-[#38bdf8]" />,
       specs: ["James Hardie Certified", "Ventilated Soffits", "Custom Fascia Wraps"],
       actionText: "Configure Siding & Trim Scope",
@@ -34,7 +34,7 @@ export default function HouseSplitShowcase({ onSelectDiscipline }) {
       description: "Heavy-gauge .032\" aluminum rollformed on-site directly from our mobile extrusion unit. Precision hand-mitered corners eliminate leak-prone seams entirely.",
       bgColor: "#0284c7", // rich brand sky blue
       textColor: "#ffffff",
-      image: "/projects/craft-gutter-real.jpg",
+      image: "/projects/gutter-seamless-fascia-run.jpg",
       icon: <Droplets className="w-6 h-6 text-white" />,
       specs: ["Extruded On-Site", ".032\" Heavy Aluminum", "Micro-Mesh Leaf Filtration"],
       actionText: "Configure Gutter Scope",
@@ -42,14 +42,14 @@ export default function HouseSplitShowcase({ onSelectDiscipline }) {
     },
     {
       title: "General Construction & Remodeling",
-      frontTitle: "Turnkey Remodeling & Roofing",
+      frontTitle: "Turnkey Remodeling & Construction",
       frontLabel: "SPECIALIZATION 03 // REMODELING & CONSTRUCTION",
-      description: "Complete residential remodeling, structural porch additions, timber porticos, masonry facades, and 50-year high-wind architectural roofing systems.",
+      description: "Complete residential remodeling, structural porch additions, timber porticos, masonry facades, and turnkey interior renovations with over 4 years of proven field execution.",
       bgColor: "#172033", // architectural graphite slate
       textColor: "#ffffff",
-      image: "/projects/craft-roof-real.jpg",
+      image: "/projects/gc-timber-porch-framing.jpg",
       icon: <Shield className="w-6 h-6 text-amber-400" />,
-      specs: ["Turnkey Remodeling", "Structural Timber & Masonry", "50-Yr Roof Shield"],
+      specs: ["Turnkey Remodeling", "Structural Timber & Masonry", "Over 4+ Years Experience"],
       actionText: "Configure Remodeling Scope",
       onClick: () => handleCardClick("General Construction & Remodeling")
     }
